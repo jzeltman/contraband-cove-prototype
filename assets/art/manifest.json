@@ -1,0 +1,377 @@
+{
+  "version": 1,
+  "title": "Contraband Cove prototype art kit",
+  "generatedWith": "OpenAI image generation",
+  "style": "Production 2D game asset for Contraband Cove, hand-painted digital illustration with crisp angular polygon-inspired shapes, simplified materials, soft warm upper-left sunlight, ochre timber, muted navy, brass and turquoise palette. Stylized mature pirate adventure, charming and grounded, not chibi, not photorealistic, not detailed 3D render. Consistent clean silhouettes. NO UI, NO text, NO letters, NO numbers, NO logos, NO borders. ",
+  "status": "Generated art; game integration pending.",
+  "coordinateConvention": "Normalized anchors are relative to full image dimensions. Preserve canvas margins.",
+  "compositionNotes": {
+    "inspection": "dock, captain, desk, props/evidence in back-to-front order; adjust for portrait viewport.",
+    "harbor": "Overview and berth overlay share a 1024x1536 canvas. Render at identical bounds; never crop either independently.",
+    "scale": "Stand is fixed. Approximate stand pivot [0.5,0.075], beam pivot [0.5,0.44], beam suspension points [0.043,0.55] and [0.957,0.55], pan attachment [0.5,0.07]. Calibrate during interaction implementation; no physics is baked into the images.",
+    "characters": "Mara expressions share canvas size. Portrait identity must not predict whether cargo is legal.",
+    "evidence": "All text, numeric weights, seal symbols and deliberate seal mismatches must be deterministic HTML/SVG/canvas layers. Do not use generated texture details as clues."
+  },
+  "assets": [
+    {
+      "id": "mara-neutral",
+      "purpose": "Clerk instruction and review portrait.",
+      "original": {
+        "path": "assets/art/originals/mara-neutral.png",
+        "width": 1145,
+        "height": 1374,
+        "bytes": 1426041,
+        "alpha": true,
+        "sha256": "41611072196c19fa50de9ea8d7e8403393ac7f091c8adfb5e0b7c492b3b6ae65",
+        "gitBlobSha": "54489d6a6c070ca397ba6a1b4d472acbd6d519bc"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/mara-neutral.webp",
+        "width": 640,
+        "height": 768,
+        "bytes": 67856,
+        "gitBlobSha": "0df1c94ee781f2b0dc2d68482b7dfeb6a933994f"
+      }
+    },
+    {
+      "id": "inspection-dock",
+      "purpose": "Background for cargo inspection scenes; layer captain and desk above.",
+      "original": {
+        "path": "assets/art/originals/inspection-dock.png",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 2075081,
+        "alpha": false,
+        "sha256": "2f8594a4fdfab9ee7d3f66a1ee0c8d08059a2c485d6298c8c2cac940a3e01ad0",
+        "gitBlobSha": "9199b80614e00bd2cd65248c6761d3bca1a0feba"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/inspection-dock.webp",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 171012,
+        "gitBlobSha": "6defd4b90730c5c9fecff0675342d489a0fc67e8"
+      }
+    },
+    {
+      "id": "inspection-desk",
+      "purpose": "Foreground work surface for both minigames.",
+      "original": {
+        "path": "assets/art/originals/inspection-desk.png",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 1875428,
+        "alpha": true,
+        "sha256": "18ebd8f7c694bb55bfd773f6e44b0d9f8616c52277128697e446c6c3ca1c8c31",
+        "gitBlobSha": "f796f6930308eaa80aead933ae4aa4c3d3d4f745"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/inspection-desk.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 46502,
+        "gitBlobSha": "99fedfa2014bce93fc7740a0f39f16d82bb6b1ee"
+      }
+    },
+    {
+      "id": "scale-stand",
+      "purpose": "Stationary weighing apparatus base and upright.",
+      "original": {
+        "path": "assets/art/originals/scale-stand.png",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 1397659,
+        "alpha": true,
+        "sha256": "fe3a01c34fd41f781067ff6b68985e981893f60e67ed4325d714da619f81e5a8",
+        "gitBlobSha": "03d423337a547f266c14ddf216544a99d715e155"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/scale-stand.webp",
+        "width": 512,
+        "height": 768,
+        "bytes": 32172,
+        "gitBlobSha": "85bdea301f1bc16a138c9c13b754200662bcc548"
+      }
+    },
+    {
+      "id": "scale-beam",
+      "purpose": "Rotating weighing beam.",
+      "original": {
+        "path": "assets/art/originals/scale-beam.png",
+        "width": 2172,
+        "height": 724,
+        "bytes": 452348,
+        "alpha": true,
+        "sha256": "9a6469bfa78289e7edbddcc2c0933bdcfb1df173bfa1cb1f2c5171a27d7e700e",
+        "gitBlobSha": "19f6e9b38e6f52049351729bc2181685ccbd07e5"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/scale-beam.webp",
+        "width": 768,
+        "height": 256,
+        "bytes": 16954,
+        "gitBlobSha": "cbe3cb96d775b3b6096cb0e8a97338dda6a31a58"
+      }
+    },
+    {
+      "id": "scale-pan",
+      "purpose": "Suspended pan and chains; reuse twice, keep upright as beam tilts.",
+      "original": {
+        "path": "assets/art/originals/scale-pan.png",
+        "width": 1291,
+        "height": 1218,
+        "bytes": 903453,
+        "alpha": true,
+        "sha256": "011ff081f9619cbe7c59c9d9b0237624b4d0faba7afbf1180f10fd4af7b304f9",
+        "gitBlobSha": "4900484ee455dbcbabd83b09cb88c617437c75f9"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/scale-pan.webp",
+        "width": 768,
+        "height": 725,
+        "bytes": 85734,
+        "gitBlobSha": "f1146600c8c0b505b62546db9fa8f6d3f65fbf35"
+      }
+    },
+    {
+      "id": "reference-weight",
+      "purpose": "Reusable draggable reference weight; add numeric values in code.",
+      "original": {
+        "path": "assets/art/originals/reference-weight.png",
+        "width": 1282,
+        "height": 1227,
+        "bytes": 1488757,
+        "alpha": true,
+        "sha256": "5676fc44990902d5d6a2ee73ffc272aedb4730f63c45898698c6adf3a957ca2e",
+        "gitBlobSha": "6b98e7fb5467279ba7b3114f4ad4ef6fdf4474a8"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/reference-weight.webp",
+        "width": 768,
+        "height": 735,
+        "bytes": 74886,
+        "gitBlobSha": "ec8fb514c668ee338deccd2aea7d84fe0866b7e3"
+      }
+    },
+    {
+      "id": "wooden-crate",
+      "purpose": "Common cargo container.",
+      "original": {
+        "path": "assets/art/originals/wooden-crate.png",
+        "width": 1304,
+        "height": 1206,
+        "bytes": 1957493,
+        "alpha": true,
+        "sha256": "4138ae83ee7935455e1967032519e4b6246c8859c0c9b6ec35f2d4419515497c",
+        "gitBlobSha": "1d9b039c361f94f199f82863aa00c3cb9324c6d8"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/wooden-crate.webp",
+        "width": 768,
+        "height": 710,
+        "bytes": 109042,
+        "gitBlobSha": "8b8f12fd130d517983b2d2fff7fd622081816c4e"
+      }
+    },
+    {
+      "id": "cloth-bundle",
+      "purpose": "Alternate common cargo container.",
+      "original": {
+        "path": "assets/art/originals/cloth-bundle.png",
+        "width": 1312,
+        "height": 1199,
+        "bytes": 1886408,
+        "alpha": true,
+        "sha256": "bdb764cbd20c81926520375c95c90f37fc354308c21bace39ff36a104641e0d0",
+        "gitBlobSha": "bbc60feda87610debec1e662c961d74049153083"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/cloth-bundle.webp",
+        "width": 768,
+        "height": 702,
+        "bytes": 98320,
+        "gitBlobSha": "2db05bdc0012a28ff5caed29e849bec520c26739"
+      }
+    },
+    {
+      "id": "trade-chest",
+      "purpose": "Higher-value shipment cargo container.",
+      "original": {
+        "path": "assets/art/originals/trade-chest.png",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 2157205,
+        "alpha": true,
+        "sha256": "015f88eba820f3119ccc1b8edf89eb12f7b6207225b95110b353198054eff9bc",
+        "gitBlobSha": "195daf62a99ee0cf5a3058237f7e8d6ce5893a33"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/trade-chest.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 62630,
+        "gitBlobSha": "09b95f47f2b036b961708e1c5417ed83e67b14ff"
+      }
+    },
+    {
+      "id": "shipment-document",
+      "purpose": "Blank document surface; render all case information in code.",
+      "original": {
+        "path": "assets/art/originals/shipment-document.png",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 2224138,
+        "alpha": true,
+        "sha256": "5899ec50de9fb0a6dfd0fb99d40d37e40d63e36fa5ac2c659f2a0c3a2c625ce4",
+        "gitBlobSha": "68c9689ad8d01bf553bb8aca9fb257de05d90c46"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/shipment-document.webp",
+        "width": 512,
+        "height": 768,
+        "bytes": 34522,
+        "gitBlobSha": "b7c7847babb9bb3a0ca7b6bda5add0025cc4fb7a"
+      }
+    },
+    {
+      "id": "reference-card",
+      "purpose": "Blank reference surface for current comparison evidence.",
+      "original": {
+        "path": "assets/art/originals/reference-card.png",
+        "width": 1536,
+        "height": 1024,
+        "bytes": 1991163,
+        "alpha": true,
+        "sha256": "5e242307035d9688cb9b1008a1da6ee058f09893c34471d5b9a5e93d61e03f38",
+        "gitBlobSha": "82caaf538c37db29f2a4eaa428c9450f27472e2f"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/reference-card.webp",
+        "width": 768,
+        "height": 512,
+        "bytes": 39758,
+        "gitBlobSha": "c3e0ff5ad093bba8ec886d18fd1f225de8fba9a7"
+      }
+    },
+    {
+      "id": "mara-pleased",
+      "purpose": "Clerk success and training feedback portrait.",
+      "original": {
+        "path": "assets/art/originals/mara-pleased.png",
+        "width": 1145,
+        "height": 1374,
+        "bytes": 1330322,
+        "alpha": true,
+        "sha256": "093ad2c7b4ae0d0683b07da6ca6a7759f3b036c5d6f35224be751e569875dc2e",
+        "gitBlobSha": "cfee7d7122659ce9826803a68fe4eafddab72cb0"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/mara-pleased.webp",
+        "width": 640,
+        "height": 768,
+        "bytes": 59496,
+        "gitBlobSha": "10fda2b0628c34b86f16860ea07807a38f06c23b"
+      }
+    },
+    {
+      "id": "harbor-overview",
+      "purpose": "Starting harbor overview for active-play progression.",
+      "original": {
+        "path": "assets/art/originals/harbor-overview.png",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 2534163,
+        "alpha": false,
+        "sha256": "b689e29cec66614c3a9a17842f165b6df2087d43946a2be17f6e9ee6e86690d5",
+        "gitBlobSha": "96f726035cb77e3ae76fd320fdff46cc249649dd"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/harbor-overview.webp",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 279256,
+        "gitBlobSha": "1895119082e25a353ffc7b1716a6cd5a5d080dfd"
+      }
+    },
+    {
+      "id": "merchant-captain",
+      "purpose": "Reusable shipment visitor portrait.",
+      "original": {
+        "path": "assets/art/originals/merchant-captain.png",
+        "width": 1145,
+        "height": 1374,
+        "bytes": 1737049,
+        "alpha": true,
+        "sha256": "eaa1236cd4f82e8e6de5c5673d03cde75bf760d012cf08e2e8e1018df7cd3db1",
+        "gitBlobSha": "d7ad32d462354ecfbface29a36ea1fd93c49af30"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/merchant-captain.webp",
+        "width": 640,
+        "height": 768,
+        "bytes": 76620,
+        "gitBlobSha": "cbee91081c3460874453aff217b7df040d89c363"
+      }
+    },
+    {
+      "id": "weathered-sailor",
+      "purpose": "Reusable shipment visitor portrait.",
+      "original": {
+        "path": "assets/art/originals/weathered-sailor.png",
+        "width": 1145,
+        "height": 1374,
+        "bytes": 1555487,
+        "alpha": true,
+        "sha256": "f5d5cf796ed6aec3bce6be033952c1bc122262a397de5f19ad232d7d5ea6d3a0",
+        "gitBlobSha": "7e371029ffc95cde6d1d77f56d37fe4dd055079d"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/weathered-sailor.webp",
+        "width": 640,
+        "height": 768,
+        "bytes": 77106,
+        "gitBlobSha": "d0b2d4cb6b805edc2896d3d49627f33522e0d058"
+      }
+    },
+    {
+      "id": "well-dressed-trader",
+      "purpose": "Reusable shipment visitor portrait.",
+      "original": {
+        "path": "assets/art/originals/well-dressed-trader.png",
+        "width": 1145,
+        "height": 1374,
+        "bytes": 1581855,
+        "alpha": true,
+        "sha256": "a3d14baa51c87c72434bd97cfc120b830e93d56f33b22b97a67a966a985a7942",
+        "gitBlobSha": "406822b0b7b737ca5d6a7836068e1563ea227b66"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/well-dressed-trader.webp",
+        "width": 640,
+        "height": 768,
+        "bytes": 71482,
+        "gitBlobSha": "fd47b611b16842c0f578926c574ace708c8fddd4"
+      }
+    },
+    {
+      "id": "berth-upgrade",
+      "purpose": "Additional berth and crane overlay showing the first harbor upgrade.",
+      "original": {
+        "path": "assets/art/originals/berth-upgrade.png",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 1621012,
+        "alpha": true,
+        "sha256": "0578094fc19a238c5e1a945bf7fc1f041ac736e45862e6385ca863fe3b86bd8c",
+        "gitBlobSha": "4d4a6a25ed47cc66e415566589733cfbecba2769"
+      },
+      "runtime": {
+        "path": "assets/art/runtime/berth-upgrade.webp",
+        "width": 1024,
+        "height": 1536,
+        "bytes": 161674,
+        "gitBlobSha": "ec0d141282c4837006309c3fe28021487cd43622"
+      }
+    }
+  ]
+}
