@@ -1,6 +1,6 @@
 import { mkdir, copyFile, cp } from 'node:fs/promises';
 await mkdir('dist', { recursive: true });
-for (const path of ['index.html','styles.css','manifest.webmanifest','sw.js']) await copyFile(path, `dist/${path}`);
+for (const path of ['index.html','404.html','styles.css','manifest.webmanifest','sw.js']) await copyFile(path, `dist/${path}`);
 await cp('src','dist/src',{recursive:true});
 await mkdir('dist/assets/art',{recursive:true});
 await cp('assets/art/runtime','dist/assets/art/runtime',{recursive:true});
