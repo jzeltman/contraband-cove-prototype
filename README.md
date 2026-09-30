@@ -17,6 +17,10 @@ The build copies only runtime files to `dist/`; original art and tests are exclu
 
 ## Included
 
+- A daily rules briefing at the start of every shift, followed by a portrait/flavor/declaration introduction for every captain.
+- Verdicts unlock only when all required inspections are complete: explicitly mark the seal; balance the cargo to record weight. Completion does not mean the shipment passes.
+- Persistent captain portrait and gameplay header with Declaration and Daily rules dialogs; logo is hidden during gameplay.
+
 - Deterministic seal comparisons: emblem, dots, and rings.
 - Balance scale: tap to add/remove 1/2/5/10 kg reference weights; beam and upright pans follow the heavier side.
 - Five-ship shifts with separate introductions, mixed cases, and clerk recommendations.
@@ -46,7 +50,9 @@ The staff credit is tied to successful work rather than elapsed time. This is an
 
 The first shift is curated; later shifts are seeded and replayable. All current rules appear in the app. A mismatch requires HOLD for verification, not an accusation of criminal guilt. A clerk recommendation is explicitly unverified and may be wrong.
 
-Saves are versioned and device/browser-specific. Invalid saves are backed up locally before fresh state is used. Clearing browser data loses progress. No gameplay data is transmitted; testers can export a JSON log from the handbook or shift report. Duration excludes time while the page is hidden. It is not an inactivity-aware analytics SDK.
+Saves are versioned and device/browser-specific. Version 2 migrates existing version 1 coins, upgrades, results, and evidence; unfinished cases first show the new briefing/introduction. The storage key stays unchanged for compatibility. Invalid saves are backed up locally before fresh state is used. Clearing browser data loses progress. No gameplay data is transmitted; testers can export a JSON log from the handbook or shift report. Duration excludes time while the page is hidden. It is not an inactivity-aware analytics SDK.
+
+Daily briefings currently restate the stable prototype rules, with shift-specific context. Rotating legal exceptions are not implemented. References remain accessible throughout play.
 
 ## Update process
 
