@@ -1,17 +1,23 @@
-# Contraband Cove prototype · 0.3.0
+# Contraband Cove prototype · 0.4.0
 
-A mobile-first HTML/CSS/JavaScript inspection game in the Brass & Timber style. The current experiment tests three-minute shifts and the new composable artwork. One cargo per captain; no storage or multi-lot gameplay yet.
+A mobile-first HTML/CSS/JavaScript inspection game in the Brass & Timber style. This experiment tests multi-cargo shipments, visible staff assistance and an upgrade map. The goal is to find out whether players want another shift.
 
 ## Play
 
-- Read the briefing and meet the captain. The timer starts when you begin the first inspection.
-- Inspect seals and manually balance cargo; complete every required check before CLEAR/HOLD.
-- Arrivals continue while time remains. At zero, finish only an inspection already started. If time expires during an introduction, the shift ends; result feedback stays readable until you finish the shift.
-- Pause, harbor planning, reference/help dialogs and backgrounding stop time. There is no offline income.
-- Correct judgments pay 20 coins (35 premium) plus clerk credit; errors pay zero and never deduct coins. Existing training (60) and premium berth (120) remain available. Hiring and parallel staff work are later issues.
-- View actual inspection counts and earnings, then start another shift.
+- Each captain brings two cargo lots; every third vessel adds an instrument chest requiring both checks. Choose a lot to bring it onto the desk. The captain stays through the shipment.
+- Inspect seals and manually balance cargo. Switching lots preserves weights, measured mass and completed checks. Each lot needs its own CLEAR/HOLD verdict and pays once; departure adds no second payment.
+- Three-minute shifts begin at the first inspection. Planning, references, Help, Pause and backgrounding stop the clock and workers.
+- At zero, finish only the selected cargo. Other lots wait for next shift, including partial work and certified checks. The summary distinguishes this shift’s payments from the shipment’s already-paid total.
+- Hire Mara from **Open upgrade map** for 80 coins. She certifies a seal on another lot in 8 active seconds while you inspect. Select a weighing lot to let her work on the cloth seal. She records evidence, not a verdict.
+- Training costs 60 and reduces her check to 4 seconds. Hired staff credit is 2 coins per correct lot, or 6 when trained. There is no staff income before hiring, while paused, or offline.
+- Improve the berth for 120 to attract premium lots on new arrivals: 35 coins instead of 20. Existing cargo retains its declared reward. This improves the one active berth.
+- The chart shows future dockhand, warehouse, second-berth and lighthouse nodes. They are descriptive only, with no purchase action. Storage is currently represented by routing labels, with no capacity system.
 
-Three minutes is a provisional playtest value in `SHIFT_MS`. Prototype saves use a new key, `contraband-cove.save.v3`; older prototype progress is not migrated. Current progress and remaining time save locally. Clearing browser data resets progress.
+Costs and durations are provisional. Incorrect verdicts earn zero and never deduct existing coins. Prototype saves use `contraband-cove.save.v4`; old builds are not migrated.
+
+## Compare formats
+
+Help links to `?shipments=single`, which presents the **same ordered lots, evidence, and rewards** as individual captain encounters. Default `?shipments=batch` groups them into shipments. Each mode keeps a separate local save. Use this comparison to judge batching itself before balancing staff or income.
 
 ## Run and verify
 
@@ -21,22 +27,20 @@ Requires Node 22+.
 npm start
 npm test
 npm run build
-# Install Playwright and Chromium, then:
+# With Playwright + Chromium installed:
 node tests/browser-smoke.cjs
 ```
 
-Browser tests cover verdict gates, timer/pause/background behavior, expiry, rewards, reload, offline launch, narrow/desktop layouts and simulated iPhone insets. `CHROMIUM_PATH` can select an installed browser; `CHROMIUM_SINGLE_PROCESS=1` accommodates restricted local environments. Physical iPhone/Android testing remains necessary.
+Logic tests cover shipment generation, switching, mixed verdicts, hiring, worker progress, expiry/carryover, idempotent payouts and comparison-mode parity. Browser checks cover the actual mobile purchase/delegation loop, offline resume, 320/390/1280 layouts and simulated iPhone insets. `CHROMIUM_PATH` selects a local executable; `CHROMIUM_SINGLE_PROCESS=1` accommodates restricted local environments.
 
 ## Architecture and art
 
-`src/game.js` owns deterministic cases, progression and timer transitions. `src/app.js` owns live UI, monotonic clock sampling, persistence and reference dialogs. `visual-refresh.css` layers the mockup direction over the existing layout and safe-area styles. Seal emblems, dots and rings remain live evidence, and the scale uses movable components.
+`src/game.js` owns ships and their per-lot evidence/progress/results, timer transitions, staff and purchases. `src/app.js` renders live controls and samples the monotonic clock. `visual-refresh.css` contains the Brass & Timber foundation; `shipments.css` adds cargo, crew and chart layouts. All labels and evidence remain live; the scale stays articulated.
 
-Optimized artwork in `assets/art/runtime/ui` is derived from the committed Brass & Timber pack (about 0.8 MB). Only runtime art ships; source sprites, mockups and originals do not enter the build/cache. The existing three captain variants remain available. The hourglass is static artwork with live time text.
+Optimized copies in `assets/art/runtime/ui` derive from the committed composable source pack. Build and offline cache contain runtime assets only. Original artwork/reference mockups remain outside the published build.
 
 ## Deployment and roadmap
 
-The existing GitHub Actions workflow tests and deploys `dist/` to GitHub Pages on `main`. Build and service-worker cache versions advance together. Installed users can apply the downloaded update through Help.
+GitHub Actions tests and deploys `dist/` to GitHub Pages on `main`. Build and cache versions advance together. Installed users can apply downloaded updates through Help. Progress remains local to the browser/device; clearing site data resets it. Optional playtest logs stay local until shared.
 
-[Roadmap #1](https://github.com/jzeltman/contraband-cove-prototype/issues/1): timer/UI (#21/#22), then cargo batches (#23), hiring (#20), visible delegation (#24), handling/storage (#25), and harbor expansion (#26).
-
-The aim is to test fun and readability before expanding scope. No accounts, remote analytics, monetization or offline earnings. Optional playtest exports stay local until the tester shares them.
+[Roadmap #1](https://github.com/jzeltman/contraband-cove-prototype/issues/1): cargo batches (#23), hiring (#20), visible delegation (#24), upgrade map (#27), then owner playtest before handling/storage (#25) and harbor expansion (#26). Monetization has been removed from the roadmap.

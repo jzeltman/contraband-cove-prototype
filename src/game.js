@@ -1,7 +1,7 @@
-export const BUILD = '0.3.0';
-export const SAVE_KEY = 'contraband-cove.save.v3';
+export const BUILD = '0.4.0';
+export const SAVE_KEY = 'contraband-cove.save.v4';
 export const SHIFT_MS = 180000;
-export const ECONOMY = Object.freeze({ shipment: 20, premium: 35, clerk: 2, trainedClerk: 6, trainingCost: 60, berthCost: 120 });
+export const ECONOMY = Object.freeze({ shipment: 20, premium: 35, clerk: 2, trainedClerk: 6, hireCost: 80, trainingCost: 60, berthCost: 120 });
 export const CAPTAINS = [
   { name: 'Captain Finch', ship: 'The Copper Gull', art: 'merchant-captain', line: 'A fair wind and honest cargo. Take a look for yourself.' },
   { name: 'Captain Brine', ship: 'The Old Compass', art: 'weathered-sailor', line: 'Been sailing these waters longer than that dock’s been standing.' },
@@ -63,114 +63,180 @@ export function explanation(c) {
 export function validateCase(c) {
   return c.checks.length > 0 && c.checks.every(x => ['seal', 'weight'].includes(x)) && Number.isInteger(c.actual) && c.actual > 0 && c.actual <= 30 && Number.isInteger(c.declared) && c.declared > 0 && c.reward > 0 && [c.reference, c.presented].every(s => ['anchor', 'ship', 'compass'].includes(s.symbol) && s.marks >= 1 && s.marks <= 4 && ['single', 'double'].includes(s.border));
 }
-export function initialState(seed = 28471) {
-  return { version: 3, remainingMs: SHIFT_MS, started: false, ended: false, paused: false, shiftBerth: false, seed, coins: 0, trained: false, berth: false, shift: 1, index: 0, cases: Array.from({ length: 5 }, (_, i) => makeCase(seed, 1, i)), results: [], history: [], screen: 'harbor', briefed: false, introduced: false, tab: 'seal', weights: [], measured: null, sealFocus: null, checked: [], events: [], activeMs: 0 };
+export function makeShipment(seed, serial, premium = false, single = false) {
+  // The same ordered lots support the optional single-cargo comparison mode.
+  let group = serial, position = 0;
+  if (single) { group = 0; position = serial; while (position >= (group % 3 === 2 ? 3 : 2)) { position -= group % 3 === 2 ? 3 : 2; group++; } }
+  const count = single ? 1 : group % 3 === 2 ? 3 : 2;
+  const indices = single ? [position] : Array.from({ length: count }, (_, i) => i);
+  const captain = group % CAPTAINS.length;
+  const lots = indices.map(i => {
+    const c = makeCase(seed + group * 101, group + 1, [0, 3, 4][i], premium);
+    if (group > 0) {
+      const rng = random(seed + group * 811 + i * 613);
+      c.presented = { ...c.reference }; c.actual = c.declared;
+      if (rng() < 0.4) {
+        if (c.checks.includes('seal') && (!c.checks.includes('weight') || rng() < 0.5)) {
+          const part = Math.floor(rng() * 3);
+          if (part === 0) c.presented.symbol = ['anchor','ship','compass'].find(x=>x!==c.reference.symbol);
+          if (part === 1) c.presented.marks = c.reference.marks === 4 ? 2 : c.reference.marks + 1;
+          if (part === 2) c.presented.border = c.reference.border === 'single' ? 'double' : 'single';
+        } else c.actual = c.declared + 2;
+      }
+    }
+    return { ...c, id: `${seed}-lot-${group}-${i}`, captain,
+      cargo: ['cloth-bundle', 'wooden-crate', 'trade-chest'][i],
+      goods: ['Cloth bundle', 'Supply crate', 'Instrument chest'][i],
+      checked: [], weights: [], measured: null, sealFocus: null, tab: c.checks[0],
+      started: false, certified: false, sealWorkMs: 0, result: null, inspectionMs: 0 };
+  });
+  return { id: `${seed}-ship-${serial}`, captain, introduced: false, lots };
 }
-export function currentCase(s) { return s.cases[s.index]; }
+export function initialState(seed = 28471, single = false) {
+  return { version: 4, seed, single, serial: 0, ship: makeShipment(seed, 0, false, single), activeLot: 0,
+    remainingMs: SHIFT_MS, started: false, ended: false, paused: false, overtimeLotId: null,
+    coins: 0, hired: false, trained: false, berth: false, shift: 1,
+    results: [], history: [], departures: 0, screen: 'harbor', returnScreen: 'introduction',
+    briefed: false, events: [], activeMs: 0, selectedUpgrade: 'mara' };
+}
+export function currentCase(s) { return s.ship.lots[s.activeLot]; }
+export function shipmentComplete(s) { return s.ship.lots.every(l => l.result); }
 export function readyToJudge(s) {
   const c = currentCase(s);
-  return !!c && c.checks.every(check => s.checked.includes(check) && (check !== 'weight' || s.measured === c.actual));
+  return !!c && !c.result && c.checks.every(check => c.checked.includes(check) && (check !== 'weight' || c.measured === c.actual));
 }
+export function lotStatus(lot) { return lot.result ? lot.result.verdict === 'clear' ? 'Cleared' : 'Held' : lot.started || lot.checked.length ? 'In progress' : 'Unchecked'; }
+export function workerTarget(s) {
+  if (!s.hired || s.paused || s.ended || s.remainingMs <= 0 || s.screen !== 'inspection') return null;
+  return s.ship.lots.find(l => l.id !== currentCase(s).id && !l.result && l.checks.includes('seal') && !l.checked.includes('seal')) || null;
+}
+export function workerDuration(s) { return s.trained ? 4000 : 8000; }
 export function dailyRules(s) {
-  return {
-    title: `Daily rules · Shift ${s.shift}`,
-    note: s.shift === 1 ? 'Opening day: compare seals first, then learn the scales. The fifth arrival needs both checks; more follow while time remains.' : s.berth ? 'The improved berth welcomes premium shipments. Apply the same checks to every captain.' : 'Arrivals continue until the tide turns. Review Mara’s recommendations against the evidence.',
+  return { title: `Daily rules · Shift ${s.shift}`,
+    note: s.shift === 1 ? 'One captain, separate cargo decisions. Inspect the cloth seal and weigh the supply crate. Every third vessel adds an instrument chest.' : 'Unfinished cargo waits for you. Every lot still needs its own verdict.',
     entries: [
-      ['hold', 'Three minutes until the tide turns', 'The clock starts at your first inspection. Planning, references and pause stop time. At zero, finish only the cargo already on your desk.'],
-      ['seal', 'Official seals must match', 'Compare the emblem, dots, and rings with the official reference. Mark the seal inspected when you have checked it.'],
-      ['scale', 'Gross weight must match exactly', 'Balance the cargo using reference weights. The declared weight includes packaging. No weight discrepancy is permitted.'],
-      ['check', 'Complete every required check', 'A seal-only or weight-only arrival needs one check. When both are listed, complete both before choosing CLEAR or HOLD.'],
-      ['hold', 'Clear matches. Hold discrepancies.', 'CLEAR only when all required evidence matches. HOLD any mismatch for verification; a hold is not an accusation of guilt.'],
-      ['coin', 'Payment follows correct judgment', 'Correct verdicts earn shipment income and clerk credit. Incorrect verdicts earn zero. Existing coins and upgrades are never deducted.']
-    ]
-  };
+      ['hold', 'Three minutes until the tide turns', 'The clock starts at your first inspection. Planning, references and pause stop time. At zero, finish only the selected cargo. Other lots wait for the next shift.'],
+      ['seal', 'Official seals must match', 'Compare the emblem, dots and rings. Mark the seal inspected once you have checked it.'],
+      ['scale', 'Gross weight must match exactly', 'Balance the cargo using reference weights. Declared weight includes packaging. No discrepancy is permitted.'],
+      ['check', 'Each lot needs every required check', 'Switching cargo preserves your work. Certified checks by hired Mara count; a completed check does not mean the cargo passes.'],
+      ['hold', 'Clear matches. Hold discrepancies.', 'Judge every lot separately. A held lot does not condemn the whole shipment. Your verdict routes it to ordinary or secure storage.'],
+      ['coin', 'Payment follows correct judgment', 'Correct lot verdicts pay once. Mistakes earn zero and never deduct coins. Ship departure adds no second payment.']
+    ] };
 }
 export function totalWeight(weights) { return weights.reduce((a, b) => a + b, 0); }
-// Positive means the right/reference side moves down. Cargo is on the left.
 export function scaleAngle(actual, reference) { return Math.max(-12, Math.min(12, (reference - actual) * 2)); }
-function event(s, type, detail = {}) { s.events = [...s.events.slice(-499), { type, build: BUILD, shift: s.shift, caseId: currentCase(s)?.id, ...detail }]; }
+function event(s, type, detail = {}) { s.events = [...s.events.slice(-499), { type, build: BUILD, shift: s.shift, shipId: s.ship.id, lotId: currentCase(s)?.id, ...detail }]; }
+function endShift(s) { s.ended = true; s.screen = 'summary'; event(s, 'shift_complete', { lots: s.results.length, departures: s.departures }); }
+function startLot(s, index) {
+  s.activeLot = index; currentCase(s).started = true; s.screen = 'inspection';
+  s.started = true; s.ship.introduced = true; event(s, 'lot_open');
+}
+function newShip(s) {
+  s.serial++; s.ship = makeShipment(s.seed, s.serial, s.berth, s.single);
+  s.activeLot = s.hired && s.ship.lots.length > 1 ? 1 : 0;
+}
 export function reduce(state, action) {
-  const s = structuredClone(state);
-  const c = currentCase(s);
+  const s = structuredClone(state), c = currentCase(s);
   if (s.paused && !['resume', 'harbor'].includes(action.type)) return state;
   switch (action.type) {
     case 'pause': s.paused = true; break;
     case 'resume': s.paused = false; break;
     case 'tick': {
-      if (!s.started || s.ended || !['introduction', 'inspection', 'result'].includes(s.screen)) break;
+      if (!s.started || s.ended || !['introduction', 'inspection', 'result', 'shipment'].includes(s.screen)) break;
       const delta = Number(action.ms);
       if (!Number.isFinite(delta) || delta <= 0) break;
-      s.remainingMs = Math.max(0, s.remainingMs - delta);
-      if (s.remainingMs === 0 && s.screen === 'introduction') { s.ended = true; s.screen = 'summary'; event(s, 'shift_complete'); }
+      const active = Math.min(delta, s.remainingMs);
+      const worker = workerTarget(s);
+      if (worker) {
+        worker.sealWorkMs = Math.min(workerDuration(s), worker.sealWorkMs + active);
+        if (worker.sealWorkMs >= workerDuration(s)) {
+          worker.checked.push('seal'); worker.certified = true;
+          event(s, 'mara_certified', { targetLotId: worker.id, matches: sealMatches(worker) });
+        }
+      }
+      if (s.screen === 'inspection' && !c.result) c.inspectionMs += delta;
+      const before = s.remainingMs;
+      s.remainingMs = Math.max(0, before - delta);
+      if (before > 0 && s.remainingMs === 0) {
+        s.overtimeLotId = s.screen === 'inspection' && c.started && !c.result ? c.id : null;
+        event(s, 'tide_turned', { overtimeLotId: s.overtimeLotId });
+        if (s.screen === 'introduction') endShift(s);
+      }
       break;
     }
     case 'start':
-      s.screen = s.ended ? 'summary' : s.results.length > s.index ? 'result' : !s.briefed ? 'briefing' : !s.introduced ? 'introduction' : 'inspection';
-      if (c && !c.checks.includes(s.tab)) s.tab = c.checks[0];
-      event(s, 'inspection_open'); break;
+      s.screen = s.ended ? 'summary' : !s.briefed ? 'briefing' : s.returnScreen;
+      break;
     case 'acknowledgeRules':
       if (s.screen !== 'briefing') break;
-      s.briefed = true; s.screen = s.introduced ? 'inspection' : 'introduction'; event(s, 'rules_acknowledged'); break;
+      s.briefed = true; s.screen = 'introduction'; event(s, 'rules_acknowledged'); break;
     case 'beginInspection':
-      if (s.screen !== 'introduction' || !s.briefed || s.remainingMs <= 0 || s.ended) break;
-      s.started = true;
-      s.introduced = true; s.screen = 'inspection'; s.tab = c.checks[0]; event(s, 'captain_introduced'); break;
-    case 'harbor': s.paused = false; s.screen = 'harbor'; break;
-    case 'tab':
-      if (c && c.checks.includes(action.tab)) { s.tab = action.tab; event(s, 'tool_open', { tool: action.tab }); } break;
-    case 'focus': if (c && ['symbol', 'marks', 'border'].includes(action.part)) { s.sealFocus = action.part; event(s, 'seal_focus', { part: action.part }); } break;
-    case 'checked':
-      if (s.screen === 'inspection' && c?.checks.includes('seal') && action.check === 'seal' && !s.checked.includes('seal')) { s.checked.push('seal'); event(s, 'seal_completed'); } break;
-    case 'weight':
-      if (s.screen !== 'inspection' || !c.checks.includes('weight') || ![1, 2, 5, 10].includes(action.value)) break;
-      if (totalWeight(s.weights) + action.value <= 30) { s.weights.push(action.value); event(s, 'weight_added', { value: action.value }); }
-      if (totalWeight(s.weights) === c.actual) { s.measured = c.actual; if (!s.checked.includes('weight')) s.checked.push('weight'); }
+      if (s.screen !== 'introduction' || !s.briefed || s.remainingMs <= 0 || s.ended || c.result) break;
+      startLot(s, s.activeLot); break;
+    case 'selectLot': {
+      const index = Number(action.index), lot = s.ship.lots[index];
+      if (!['inspection', 'introduction'].includes(s.screen) || s.remainingMs <= 0 || !lot || lot.result) break;
+      if (s.screen === 'inspection') startLot(s, index); else s.activeLot = index;
       break;
-    case 'removeWeight': if (s.screen === 'inspection') s.weights.splice(action.index, 1); break;
-    case 'resetWeights': s.weights = []; break;
+    }
+    case 'harbor':
+      if (!['harbor', 'upgrades'].includes(s.screen)) s.returnScreen = s.screen;
+      s.paused = false; s.screen = 'harbor'; break;
+    case 'upgrades':
+      if (!['harbor', 'upgrades'].includes(s.screen)) s.returnScreen = s.screen;
+      s.screen = 'upgrades'; break;
+    case 'selectUpgrade':
+      if (s.screen === 'upgrades' && ['desk','mara','training','berth','dockhand','warehouse','secondBerth','lighthouse'].includes(action.id)) s.selectedUpgrade = action.id;
+      break;
+    case 'tab': if (s.screen === 'inspection' && c.checks.includes(action.tab)) c.tab = action.tab; break;
+    case 'focus': if (s.screen === 'inspection' && ['symbol', 'marks', 'border'].includes(action.part)) c.sealFocus = action.part; break;
+    case 'checked':
+      if (s.screen === 'inspection' && !c.result && c.checks.includes('seal') && action.check === 'seal' && !c.checked.includes('seal')) { c.checked.push('seal'); event(s, 'seal_completed'); } break;
+    case 'weight':
+      if (s.screen !== 'inspection' || c.result || !c.checks.includes('weight') || ![1, 2, 5, 10].includes(action.value)) break;
+      if (totalWeight(c.weights) + action.value <= 30) c.weights.push(action.value);
+      if (totalWeight(c.weights) === c.actual) { c.measured = c.actual; if (!c.checked.includes('weight')) c.checked.push('weight'); }
+      break;
+    case 'removeWeight': if (s.screen === 'inspection') c.weights.splice(action.index, 1); break;
+    case 'resetWeights': if (s.screen === 'inspection') c.weights = []; break;
     case 'judge': {
-      if (s.screen !== 'inspection' || !c || !s.briefed || !s.introduced || !readyToJudge(s) || s.results.some(r => r.id === c.id) || !['clear', 'hold'].includes(action.verdict)) break;
+      if (s.screen !== 'inspection' || !s.briefed || !s.ship.introduced || !readyToJudge(s) || !['clear','hold'].includes(action.verdict)) break;
+      if (s.remainingMs <= 0 && s.overtimeLotId !== c.id) break;
       const correct = action.verdict === correctVerdict(c);
       const shipment = correct ? c.reward : 0;
-      const clerk = correct ? (s.trained ? ECONOMY.trainedClerk : ECONOMY.clerk) : 0;
-      const durationMs = Math.max(0, Math.min(Number(action.durationMs) || 0, 3600000));
-      s.coins += shipment + clerk;
-      s.results.push({ id: c.id, verdict: action.verdict, correct, shipment, clerk, durationMs });
-      s.activeMs += durationMs;
-      s.screen = 'result';
-      event(s, 'judgment', { caseType: c.type, correct, verdict: action.verdict, durationMs, shipment, clerk });
-      break;
+      const clerk = correct && s.hired ? (s.trained ? ECONOMY.trainedClerk : ECONOMY.clerk) : 0;
+      c.result = { id: c.id, shipId: s.ship.id, goods: c.goods, verdict: action.verdict, correct, shipment, clerk, durationMs: Math.round(c.inspectionMs) };
+      s.coins += shipment + clerk; s.results.push(c.result); s.activeMs += c.result.durationMs;
+      s.screen = 'result'; event(s, 'judgment', c.result); break;
     }
     case 'next':
       if (s.screen !== 'result') break;
-      if (s.remainingMs <= 0) {
-        s.ended = true; s.screen = 'summary';
-        event(s, 'shift_complete', { correct: s.results.filter(r => r.correct).length });
-        break;
-      }
-      s.index++; s.weights = []; s.measured = null; s.checked = []; s.sealFocus = null; s.introduced = false;
-      if (!s.cases[s.index]) s.cases.push(makeCase(s.seed, s.shift, s.index, s.shiftBerth));
-      s.screen = 'introduction'; s.tab = currentCase(s).checks[0];
-      break;
+      if (shipmentComplete(s)) { s.screen = 'shipment'; break; }
+      if (s.remainingMs <= 0) { endShift(s); break; }
+      startLot(s, s.ship.lots.findIndex(l => !l.result)); break;
+    case 'depart':
+      if (s.screen !== 'shipment' || !shipmentComplete(s)) break;
+      s.departures++; event(s, 'ship_departed');
+      if (s.remainingMs <= 0) { endShift(s); break; }
+      newShip(s); s.screen = 'introduction'; break;
     case 'nextShift':
       if (!s.ended) break;
-      s.history = [...s.history.slice(-19), { shift: s.shift, results: s.results }];
-      s.shift++; s.index = 0; s.results = []; s.weights = []; s.measured = null; s.checked = []; s.sealFocus = null;
-      s.shiftBerth = s.berth;
-      s.remainingMs = SHIFT_MS; s.started = false; s.ended = false; s.paused = false;
-      s.cases = Array.from({ length: 5 }, (_, i) => makeCase(s.seed, s.shift, i, s.berth));
-      s.tab = s.cases[0].checks[0]; s.screen = 'briefing'; s.briefed = false; s.introduced = false; event(s, 'next_shift'); break;
+      s.history = [...s.history.slice(-19), { shift: s.shift, results: s.results, departures: s.departures }];
+      s.shift++; s.results = []; s.departures = 0;
+      s.remainingMs = SHIFT_MS; s.started = false; s.ended = false; s.paused = false; s.overtimeLotId = null;
+      if (shipmentComplete(s)) newShip(s);
+      else s.activeLot = s.ship.lots.findIndex(l => !l.result);
+      s.screen = 'briefing'; s.briefed = false; s.returnScreen = 'introduction'; event(s, 'next_shift'); break;
+    case 'hire':
+      if (s.screen === 'upgrades' && !s.hired && s.coins >= ECONOMY.hireCost) { s.coins -= ECONOMY.hireCost; s.hired = true; event(s, 'mara_hired'); } break;
     case 'train':
-      if (!s.trained && s.coins >= ECONOMY.trainingCost) { s.coins -= ECONOMY.trainingCost; s.trained = true; event(s, 'training_purchased'); } break;
+      if (s.screen === 'upgrades' && s.hired && !s.trained && s.coins >= ECONOMY.trainingCost) { s.coins -= ECONOMY.trainingCost; s.trained = true; event(s, 'training_purchased'); } break;
     case 'upgrade':
-      if (!s.berth && s.coins >= ECONOMY.berthCost) { s.coins -= ECONOMY.berthCost; s.berth = true; event(s, 'berth_purchased'); } break;
+      if (s.screen === 'upgrades' && !s.berth && s.coins >= ECONOMY.berthCost) { s.coins -= ECONOMY.berthCost; s.berth = true; event(s, 'berth_purchased'); } break;
     default: return state;
   }
   return s;
 }
 export function restore(raw) {
-  try {
-    const s = JSON.parse(raw);
-    return s?.version === 3 && Number.isFinite(s.remainingMs) && s.remainingMs >= 0 && s.remainingMs <= SHIFT_MS && s.coins >= 0 ? s : null;
-  } catch { return null; }
+  try { const s = JSON.parse(raw); return s?.version === 4 ? s : null; } catch { return null; }
 }
