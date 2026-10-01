@@ -1,0 +1,73 @@
+{
+  "tool": "built-in imagegen",
+  "jobs": [
+    {
+      "key": "storage-ground",
+      "ref": "exec-1f1209b9-a0be-4161-b17f-99079723cc91.png",
+      "alpha": false,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Extract/reconstruct the ISOMETRIC DOCKSIDE ENVIRONMENT as a clean background plate, landscape 3:2. Remove ALL UI, lettering, signs, coins, buttons, title, captain, boat, crates, barrels, bundles, chest, awning, cart, cargo bay wooden frames, cage, all fences and freestanding props. Preserve cobblestone loading apron, vacant adjoining dirt expansion land upper-right, beautiful turquoise water lower-left, continuous wooden dock edging in foreground, stone waterfront upper-left. Flat broad empty staging zone central-left for six cargo slots. Empty expansion zone upper-right. Consistent elevated isometric view same as reference, no shelves. Edge-to-edge scenery, no vignette. This empty environment will receive separate sprites later."
+    },
+    {
+      "key": "storage-props",
+      "ref": "exec-1f1209b9-a0be-4161-b17f-99079723cc91.png",
+      "alpha": true,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Transparent PNG sprite sheet, exactly 2 columns by 2 rows of equal cells on square canvas. Four SEPARATE assets, each completely inside its own quadrant with wide transparent gutters and transparent margin, no overlap, no background, no drop shadow extending to another cell. Every full object visible. Same elevated isometric camera as reference, lighting upper-left. TOP LEFT: empty canvas awning shelter on four wooden poles with small stone footprint, no cargo under it. TOP RIGHT: small EMPTY timber-fenced impound pen with locked front gate, no cargo. BOTTOM LEFT: small wooden dock platform extension with two mooring posts, isolated. BOTTOM RIGHT: simple small completed stone warehouse building, timber double doors, red tile roof, no surrounding landscape. Each independent composable harbor upgrade object."
+    },
+    {
+      "key": "cargo",
+      "ref": "exec-1f1209b9-a0be-4161-b17f-99079723cc91.png",
+      "alpha": true,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Transparent PNG sprite sheet, exactly 2 columns by 2 rows of equal cells on square canvas. Four SEPARATE assets, each completely inside its own quadrant with wide transparent gutters and transparent margin, no overlap, no background, no drop shadow extending to another cell. Every full object visible. Extract/reconstruct cargo sprites using same isometric camera, common scale, lighting upper-left. TOP LEFT: group of three stacked timber shipping crates. TOP RIGHT: group of two wooden barrels. BOTTOM LEFT: cream cloth cargo bundle tied with rope. BOTTOM RIGHT: single dark wood chest with brass reinforced corners and lock. No ground tile below them, no labels, no cast ground shadows, transparent silhouettes."
+    },
+    {
+      "key": "ui-frames",
+      "ref": "exec-1888d2ab-b348-4417-ba86-22e8b7b9d0f9.png",
+      "alpha": true,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Transparent PNG sprite sheet, exactly 2 columns by 2 rows of equal cells on square canvas. Four SEPARATE assets, each completely inside its own quadrant with wide transparent gutters and transparent margin, no overlap, no background, no drop shadow extending to another cell. Every full object visible. Front-facing flat UI elements, no perspective. TOP LEFT: blank wide navy button with thin double brass beveled border and chamfered corners. TOP RIGHT: identical wide blank teal button. BOTTOM LEFT: identical wide blank terracotta button. BOTTOM RIGHT: blank cream parchment rectangular panel with brass frame and small corner rivets. All completely empty interiors, no symbols, no text, no illustrations. Button proportions 3:1 centered in each cell, panel proportions 3:2. Straight uniform edge centers suitable for nine-slice scaling."
+    },
+    {
+      "key": "ui-icons",
+      "ref": "exec-1888d2ab-b348-4417-ba86-22e8b7b9d0f9.png",
+      "alpha": true,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Transparent PNG sprite sheet, exactly 2 columns by 2 rows of equal cells on square canvas. Four SEPARATE assets, each completely inside its own quadrant with wide transparent gutters and transparent margin, no overlap, no background, no drop shadow extending to another cell. Every full object visible. Front-facing four standalone UI sprites without enclosing buttons. TOP LEFT: ornate brass hourglass half filled with golden sand, clear glass with transparency. TOP RIGHT: a single brass anchor icon. BOTTOM LEFT: open parchment daily-rules book icon navy outline and brass edging, blank pages. BOTTOM RIGHT: shipping declaration parchment on small navy clipboard with brass clip, blank paper. Simple bold readable silhouettes at mobile sizes. No letters anywhere."
+    },
+    {
+      "key": "inspection-parts",
+      "ref": "exec-1888d2ab-b348-4417-ba86-22e8b7b9d0f9.png",
+      "alpha": true,
+      "prompt": "Production 2D game assets derived from reference mockup, preserve warm painted Brass & Timber art, brass, navy, parchment, turquoise harbor palette. NO text, NO numbers, NO labels, NO UI screenshot. Transparent PNG sprite sheet, exactly 2 columns by 2 rows of equal cells on square canvas. Four SEPARATE assets, each completely inside its own quadrant with wide transparent gutters and transparent margin, no overlap, no background, no drop shadow extending to another cell. Every full object visible. Front-facing reusable inspection sprites. TOP LEFT: glossy RED WAX SEAL circular recessed center, completely BLANK center with no anchor or symbol; irregular wax edge. TOP RIGHT: simple separate BRASS ANCHOR emblem sized to overlay that seal blank center. BOTTOM LEFT: empty brass square checkbox with cream fill. BOTTOM RIGHT: matching brass square checkbox with deep teal fill and bold cream check mark. Not backgrounds, isolated objects on transparency."
+    },
+    {
+      "key": "inspection-background",
+      "ref": "exec-1888d2ab-b348-4417-ba86-22e8b7b9d0f9.png",
+      "alpha": false,
+      "prompt": "Extract/reconstruct only the sunny painted Mediterranean harbor scenery behind the captain in this mockup. Wide landscape 3:2 background plate, Brass & Timber game aesthetic. Remove captain and every human, all UI and text, all foreground panels. Timber vessel and sails at left, turquoise harbor middle, sunlit coastal town and pier right. Empty central foreground available for separate portrait overlay. Edge-to-edge environment, no border, no text."
+    },
+    {
+      "key": "inspection-objects",
+      "ref": "exec-1888d2ab-b348-4417-ba86-22e8b7b9d0f9.png",
+      "alpha": true,
+      "prompt": "Production transparent game sprite sheet for this exact Brass & Timber mockup. 2 columns 2 rows equal quadrants, wide transparent gutters, isolated full silhouettes no overlap. TOP LEFT: extract same smiling male merchant captain with dark navy feathered tricorn and coat, salt and pepper beard, waist-up portrait including both arms, no background, no crate in front. TOP RIGHT: a single wooden cargo crate tied in rope with small BLANK red wax seal, three-quarter front inspection view. BOTTOM LEFT: empty timber inspection desk/table front three-quarter view, broad clear tabletop, no items, no text. BOTTOM RIGHT: blank parchment reference card with curled edges, straight-on rectangular portrait view, no drawing or seal. No labels or text anywhere; same painted style as reference."
+    },
+    {
+      "key": "upgrade-map",
+      "ref": "exec-3f1c8080-57c7-416f-9f92-6576ec6b26af.png",
+      "alpha": false,
+      "prompt": "Extract/reconstruct just the parchment nautical planning map background from this Brass & Timber upgrade UI. Portrait 2:3. Fill image with warm parchment, delicate faded hand-inked coastline near outside edges, compass rose top right WITHOUT LETTERS, subtle blue sea washes around edges, broad mostly blank cream center for future upgrade cards. No UI, no cards, no buildings in center, no characters, no upgrade routes, no badges, no labels, no coins, no header, no footer, no text anywhere. Thin timber edge only at outer perimeter. A composable empty background."
+    }
+  ],
+  "additional_prompts": [
+    {
+      "key": "inspection-objects-correction",
+      "prompt": "Remove the painted backdrop; preserve captain, crate, desk, blank parchment; rearrange into square sheet with isolated silhouettes, transparent background, no glows. This corrected sheet is the export source."
+    },
+    {
+      "key": "upgrade-sprites",
+      "prompt": "Extract Mara, dockhand, customs house and lighthouse in a square transparent 2x2 sheet from the upgrade mockup. Preserve Brass & Timber style, no labels or locked overlays."
+    },
+    {
+      "key": "ui-controls",
+      "prompt": "Square transparent 2x2 sheet: navy brass-rimmed pause button, brass padlock, anchor coin, navy brass-rimmed plus button. No text. Mobile-readable silhouettes."
+    }
+  ]
+}

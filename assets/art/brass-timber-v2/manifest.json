@@ -1,0 +1,713 @@
+{
+  "version": 1,
+  "purpose": "Imagery-only preparation; not integrated into gameplay",
+  "assets": [
+    {
+      "id": "button-pause",
+      "path": "sprites/button-pause.webp",
+      "width": 531,
+      "height": 527,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "e894fc24-4610-4a72-aae9-bf11e4cabea1",
+      "source_crop": [
+        58,
+        60,
+        573,
+        571
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        40,
+        64,
+        40,
+        64
+      ],
+      "content_insets": [
+        42,
+        70,
+        42,
+        70
+      ]
+    },
+    {
+      "id": "icon-lock",
+      "path": "sprites/icon-lock.webp",
+      "width": 436,
+      "height": 554,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "e894fc24-4610-4a72-aae9-bf11e4cabea1",
+      "source_crop": [
+        728,
+        51,
+        1148,
+        589
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "icon-coin",
+      "path": "sprites/icon-coin.webp",
+      "width": 542,
+      "height": 535,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "e894fc24-4610-4a72-aae9-bf11e4cabea1",
+      "source_crop": [
+        55,
+        659,
+        581,
+        1178
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "button-expand",
+      "path": "sprites/button-expand.webp",
+      "width": 527,
+      "height": 527,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "e894fc24-4610-4a72-aae9-bf11e4cabea1",
+      "source_crop": [
+        683,
+        664,
+        1194,
+        1175
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        40,
+        64,
+        40,
+        64
+      ],
+      "content_insets": [
+        42,
+        70,
+        42,
+        70
+      ]
+    },
+    {
+      "id": "storage-awning",
+      "path": "sprites/storage-awning.webp",
+      "width": 612,
+      "height": 618,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9870550161812298
+      ],
+      "source_sheet": "0de1edb6-b654-4a76-a15f-e7cea41ee6da",
+      "source_crop": [
+        31,
+        17,
+        627,
+        619
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "storage-impound",
+      "path": "sprites/storage-impound.webp",
+      "width": 609,
+      "height": 482,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.983402489626556
+      ],
+      "source_sheet": "0de1edb6-b654-4a76-a15f-e7cea41ee6da",
+      "source_crop": [
+        651,
+        111,
+        1244,
+        577
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "dock-extension",
+      "path": "sprites/dock-extension.webp",
+      "width": 563,
+      "height": 518,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9845559845559846
+      ],
+      "source_sheet": "0de1edb6-b654-4a76-a15f-e7cea41ee6da",
+      "source_crop": [
+        51,
+        698,
+        598,
+        1200
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "warehouse-building",
+      "path": "sprites/warehouse-building.webp",
+      "width": 610,
+      "height": 594,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9865319865319865
+      ],
+      "source_sheet": "0de1edb6-b654-4a76-a15f-e7cea41ee6da",
+      "source_crop": [
+        645,
+        640,
+        1239,
+        1218
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "cargo-crates",
+      "path": "sprites/cargo-crates.webp",
+      "width": 571,
+      "height": 566,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9858657243816255
+      ],
+      "source_sheet": "a46a440b-eec7-44e3-ba1d-38a450c02f52",
+      "source_crop": [
+        63,
+        78,
+        618,
+        628
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "cargo-barrels",
+      "path": "sprites/cargo-barrels.webp",
+      "width": 530,
+      "height": 516,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9844961240310077
+      ],
+      "source_sheet": "a46a440b-eec7-44e3-ba1d-38a450c02f52",
+      "source_crop": [
+        701,
+        131,
+        1215,
+        631
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "cargo-cloth",
+      "path": "sprites/cargo-cloth.webp",
+      "width": 570,
+      "height": 487,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9835728952772074
+      ],
+      "source_sheet": "a46a440b-eec7-44e3-ba1d-38a450c02f52",
+      "source_crop": [
+        48,
+        710,
+        602,
+        1181
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "cargo-chest",
+      "path": "sprites/cargo-chest.webp",
+      "width": 557,
+      "height": 516,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9844961240310077
+      ],
+      "source_sheet": "a46a440b-eec7-44e3-ba1d-38a450c02f52",
+      "source_crop": [
+        673,
+        696,
+        1214,
+        1196
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "button-navy",
+      "path": "sprites/button-navy.webp",
+      "width": 590,
+      "height": 209,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "1bad1cfd-2643-4244-b849-81509116b99b",
+      "source_crop": [
+        29,
+        230,
+        603,
+        423
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        40,
+        64,
+        40,
+        64
+      ],
+      "content_insets": [
+        42,
+        70,
+        42,
+        70
+      ]
+    },
+    {
+      "id": "button-teal",
+      "path": "sprites/button-teal.webp",
+      "width": 590,
+      "height": 209,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "1bad1cfd-2643-4244-b849-81509116b99b",
+      "source_crop": [
+        651,
+        230,
+        1225,
+        423
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        40,
+        64,
+        40,
+        64
+      ],
+      "content_insets": [
+        42,
+        70,
+        42,
+        70
+      ]
+    },
+    {
+      "id": "button-terracotta",
+      "path": "sprites/button-terracotta.webp",
+      "width": 590,
+      "height": 211,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "1bad1cfd-2643-4244-b849-81509116b99b",
+      "source_crop": [
+        29,
+        819,
+        603,
+        1014
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        40,
+        64,
+        40,
+        64
+      ],
+      "content_insets": [
+        42,
+        70,
+        42,
+        70
+      ]
+    },
+    {
+      "id": "panel-parchment",
+      "path": "sprites/panel-parchment.webp",
+      "width": 594,
+      "height": 376,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "1bad1cfd-2643-4244-b849-81509116b99b",
+      "source_crop": [
+        651,
+        728,
+        1229,
+        1088
+      ],
+      "format": "lossless RGBA WebP",
+      "nine_slice_insets": [
+        70,
+        70,
+        70,
+        70
+      ],
+      "content_insets": [
+        76,
+        76,
+        76,
+        76
+      ]
+    },
+    {
+      "id": "hourglass-half",
+      "path": "sprites/hourglass-half.webp",
+      "width": 423,
+      "height": 590,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "21bce696-9d49-47bb-b821-814e95a592b3",
+      "source_crop": [
+        132,
+        30,
+        539,
+        604
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "icon-anchor",
+      "path": "sprites/icon-anchor.webp",
+      "width": 480,
+      "height": 583,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "21bce696-9d49-47bb-b821-814e95a592b3",
+      "source_crop": [
+        721,
+        32,
+        1185,
+        599
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "icon-rules",
+      "path": "sprites/icon-rules.webp",
+      "width": 666,
+      "height": 494,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "21bce696-9d49-47bb-b821-814e95a592b3",
+      "source_crop": [
+        14,
+        714,
+        664,
+        1192
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "icon-declaration",
+      "path": "sprites/icon-declaration.webp",
+      "width": 518,
+      "height": 593,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "21bce696-9d49-47bb-b821-814e95a592b3",
+      "source_crop": [
+        708,
+        629,
+        1210,
+        1206
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "seal-wax-blank",
+      "path": "sprites/seal-wax-blank.webp",
+      "width": 613,
+      "height": 626,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "abfe69ee-f51f-42ca-8e9a-a77c4aa2bfd8",
+      "source_crop": [
+        32,
+        37,
+        629,
+        647
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "seal-anchor-brass",
+      "path": "sprites/seal-anchor-brass.webp",
+      "width": 484,
+      "height": 574,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "abfe69ee-f51f-42ca-8e9a-a77c4aa2bfd8",
+      "source_crop": [
+        707,
+        80,
+        1175,
+        638
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "checkbox-empty",
+      "path": "sprites/checkbox-empty.webp",
+      "width": 529,
+      "height": 510,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "abfe69ee-f51f-42ca-8e9a-a77c4aa2bfd8",
+      "source_crop": [
+        75,
+        694,
+        588,
+        1188
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "checkbox-checked",
+      "path": "sprites/checkbox-checked.webp",
+      "width": 527,
+      "height": 511,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.5
+      ],
+      "source_sheet": "abfe69ee-f51f-42ca-8e9a-a77c4aa2bfd8",
+      "source_crop": [
+        668,
+        692,
+        1179,
+        1187
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "captain-merchant",
+      "path": "sprites/captain-merchant.webp",
+      "width": 605,
+      "height": 715,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9888111888111888
+      ],
+      "source_sheet": "676365bd-1ccd-4094-b4e0-d679c2183681",
+      "source_crop": [
+        88,
+        19,
+        677,
+        718
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "inspection-crate",
+      "path": "sprites/inspection-crate.webp",
+      "width": 574,
+      "height": 523,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9847036328871893
+      ],
+      "source_sheet": "676365bd-1ccd-4094-b4e0-d679c2183681",
+      "source_crop": [
+        676,
+        126,
+        1234,
+        633
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "inspection-desk",
+      "path": "sprites/inspection-desk.webp",
+      "width": 733,
+      "height": 505,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9841584158415841
+      ],
+      "source_sheet": "676365bd-1ccd-4094-b4e0-d679c2183681",
+      "source_crop": [
+        38,
+        733,
+        755,
+        1222
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "reference-parchment",
+      "path": "sprites/reference-parchment.webp",
+      "width": 431,
+      "height": 559,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9856887298747764
+      ],
+      "source_sheet": "676365bd-1ccd-4094-b4e0-d679c2183681",
+      "source_crop": [
+        783,
+        656,
+        1198,
+        1199
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "mara-clerk",
+      "path": "sprites/mara-clerk.webp",
+      "width": 561,
+      "height": 592,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9864864864864865
+      ],
+      "source_sheet": "e817ed07-0df3-4740-8142-714c1de63f21",
+      "source_crop": [
+        44,
+        39,
+        589,
+        615
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "dockhand",
+      "path": "sprites/dockhand.webp",
+      "width": 644,
+      "height": 563,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9857904085257548
+      ],
+      "source_sheet": "e817ed07-0df3-4740-8142-714c1de63f21",
+      "source_crop": [
+        626,
+        68,
+        1254,
+        615
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "customs-house",
+      "path": "sprites/customs-house.webp",
+      "width": 656,
+      "height": 561,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9857397504456328
+      ],
+      "source_sheet": "e817ed07-0df3-4740-8142-714c1de63f21",
+      "source_crop": [
+        32,
+        666,
+        672,
+        1211
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "lighthouse",
+      "path": "sprites/lighthouse.webp",
+      "width": 548,
+      "height": 605,
+      "alpha": true,
+      "anchor": [
+        0.5,
+        0.9867768595041322
+      ],
+      "source_sheet": "e817ed07-0df3-4740-8142-714c1de63f21",
+      "source_crop": [
+        697,
+        640,
+        1229,
+        1229
+      ],
+      "format": "lossless RGBA WebP"
+    },
+    {
+      "id": "storage-ground",
+      "path": "backgrounds/storage-ground.webp",
+      "width": 1536,
+      "height": 1024,
+      "alpha": false,
+      "source_image": "ef22e521-dfd7-4c7a-bf42-08f864e25385",
+      "format": "WebP quality 92"
+    },
+    {
+      "id": "inspection-harbor",
+      "path": "backgrounds/inspection-harbor.webp",
+      "width": 1536,
+      "height": 1024,
+      "alpha": false,
+      "source_image": "b40bce5b-4a03-4ed1-b94b-904bf7162351",
+      "format": "WebP quality 92"
+    },
+    {
+      "id": "upgrade-chart",
+      "path": "backgrounds/upgrade-chart.webp",
+      "width": 1024,
+      "height": 1536,
+      "alpha": false,
+      "source_image": "b21ea96c-0ce5-4179-941c-f2c68d35945d",
+      "format": "WebP quality 92"
+    }
+  ]
+}

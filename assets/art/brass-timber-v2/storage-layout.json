@@ -1,0 +1,52 @@
+{
+  "background": "backgrounds/storage-ground.webp",
+  "canvas": [
+    1536,
+    1024
+  ],
+  "placement_note": "x,y normalized bottom-center; width normalized to canvas width; initial art preview only",
+  "layers": [
+    {
+      "id": "storage-awning",
+      "x": 0.205,
+      "y": 0.295,
+      "width": 0.19
+    },
+    {
+      "id": "cargo-crates",
+      "x": 0.325,
+      "y": 0.382,
+      "width": 0.13
+    },
+    {
+      "id": "cargo-barrels",
+      "x": 0.42,
+      "y": 0.461,
+      "width": 0.12
+    },
+    {
+      "id": "cargo-chest",
+      "x": 0.23,
+      "y": 0.466,
+      "width": 0.12
+    },
+    {
+      "id": "cargo-cloth",
+      "x": 0.52,
+      "y": 0.542,
+      "width": 0.12
+    },
+    {
+      "id": "storage-impound",
+      "x": 0.78,
+      "y": 0.69,
+      "width": 0.18
+    }
+  ],
+  "expansion_land": {
+    "x": 0.72,
+    "y": 0.31,
+    "width": 0.3,
+    "height": 0.23
+  }
+}
