@@ -69,6 +69,30 @@ const fs = require('node:fs/promises');
   assert.equal(await p.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true,`No overflow at ${width}px`);
   await p.waitForFunction(()=>[...document.images].every(i=>i.complete));await p.screenshot({path:`test-results/inspection-${width}.png`,fullPage:true});await p.close();
  }
+ // Simulate iPhone status-bar/Dynamic Island insets; desktop Chromium reports 0.
+ // Physical iPhone standalone verification is still required from the owner.
+ const notchPage=await browser.newPage({viewport:{width:390,height:844}});
+ notchPage.on('pageerror',e=>errors.push(e.message));
+ await notchPage.goto('http://localhost:4173/');
+ for(const inset of [0,47,59]){
+  await notchPage.evaluate(n=>document.documentElement.style.setProperty('--safe-area-top',`${n}px`),inset);
+  const brand=await notchPage.locator('.brand').boundingBox();
+  assert.ok(brand.y>=inset,`Harbor header clears ${inset}px inset`);
+ }
+ await notchPage.getByRole('button',{name:'Open the harbor'}).click();
+ await notchPage.getByRole('button',{name:'Acknowledge & meet the captain'}).click();
+ await notchPage.getByRole('button',{name:'Begin inspection'}).click();
+ for(const inset of [0,47,59]){
+  await notchPage.evaluate(n=>document.documentElement.style.setProperty('--safe-area-top',`${n}px`),inset);
+  await notchPage.evaluate(()=>window.scrollTo(0,300));
+  const control=await notchPage.locator('[data-action="declaration"]').boundingBox();
+  const presence=await notchPage.locator('.inspection-presence').boundingBox();
+  assert.ok(control.y>=inset,`Gameplay controls clear ${inset}px inset`);
+  assert.ok(Math.abs(presence.y-(64+inset))<2,`Portrait follows inset-adjusted header`);
+  assert.equal(await notchPage.evaluate(()=>document.documentElement.scrollWidth<=innerWidth),true);
+ }
+ await notchPage.screenshot({path:'test-results/iphone-safe-area.png',fullPage:true});
+ await notchPage.close();
  assert.deepEqual(errors,[]);
  console.log('PASS: briefings, every captain introduction, verdict gating, combined checks, header dialogs, sticky portrait, narrow/desktop layouts, saving, progression, and offline reload.');
  await browser.close();

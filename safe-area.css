@@ -1,0 +1,46 @@
+/* viewport-fit=cover exposes device insets in standalone iOS PWAs.
+   Keep the inset inside the painted header, and include it in sticky offsets.
+   Custom properties also permit deterministic notch simulation in browser QA. */
+:root {
+  --safe-area-top: env(safe-area-inset-top, 0px);
+  --safe-area-left: env(safe-area-inset-left, 0px);
+  --safe-area-right: env(safe-area-inset-right, 0px);
+  --safe-area-bottom: env(safe-area-inset-bottom, 0px);
+  --masthead-height: 84px;
+  --gameplay-header-height: 70px;
+  --header-side-padding: 42px;
+}
+.masthead {
+  height: calc(var(--masthead-height) + var(--safe-area-top));
+  padding-top: var(--safe-area-top);
+  padding-left: max(var(--header-side-padding), var(--safe-area-left));
+  padding-right: max(var(--header-side-padding), var(--safe-area-right));
+}
+.gameplay-header {
+  height: calc(var(--gameplay-header-height) + var(--safe-area-top));
+}
+.inspection-presence {
+  top: calc(var(--gameplay-header-height) + var(--safe-area-top));
+}
+.inspection-v2 .tool-tabs {
+  scroll-margin-top: calc(var(--gameplay-header-height) + var(--safe-area-top) + 150px);
+}
+dialog {
+  max-height: min(85dvh, calc(100dvh - var(--safe-area-top) - var(--safe-area-bottom) - 28px));
+  top: var(--safe-area-top);
+  bottom: var(--safe-area-bottom);
+}
+@media (max-width: 900px) {
+  :root { --header-side-padding: 24px; }
+}
+@media (max-width: 650px) {
+  :root {
+    --masthead-height: 69px;
+    --gameplay-header-height: 64px;
+    --header-side-padding: 17px;
+  }
+  .gameplay-header { --header-side-padding: 10px; }
+  .inspection-v2 .tool-tabs {
+    scroll-margin-top: calc(var(--gameplay-header-height) + var(--safe-area-top) + 118px);
+  }
+}

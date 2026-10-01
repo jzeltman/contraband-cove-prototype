@@ -1,4 +1,4 @@
-export const BUILD = '0.2.0';
+export const BUILD = '0.2.1';
 export const SAVE_KEY = 'contraband-cove.save.v1';
 export const ECONOMY = Object.freeze({ shipment: 20, premium: 35, clerk: 2, trainedClerk: 6, trainingCost: 60, berthCost: 120 });
 export const CAPTAINS = [
