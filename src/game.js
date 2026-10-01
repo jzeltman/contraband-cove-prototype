@@ -1,5 +1,6 @@
-export const BUILD = '0.2.1';
-export const SAVE_KEY = 'contraband-cove.save.v1';
+export const BUILD = '0.3.0';
+export const SAVE_KEY = 'contraband-cove.save.v3';
+export const SHIFT_MS = 180000;
 export const ECONOMY = Object.freeze({ shipment: 20, premium: 35, clerk: 2, trainedClerk: 6, trainingCost: 60, berthCost: 120 });
 export const CAPTAINS = [
   { name: 'Captain Finch', ship: 'The Copper Gull', art: 'merchant-captain', line: 'A fair wind and honest cargo. Take a look for yourself.' },
@@ -19,8 +20,9 @@ export function random(seed) {
 export function makeCase(seed, shift, index, berth = false) {
   const rng = random(seed + shift * 991 + index * 37);
   const pick = n => Math.floor(rng() * n);
-  const first = shift === 1;
-  const type = first ? ['seal', 'seal', 'weight', 'weight', 'both'][index] : ['seal', 'weight', 'seal', 'weight', 'both'][index];
+  const first = shift === 1 && index < 5;
+  const slot = index % 5;
+  const type = first ? ['seal', 'seal', 'weight', 'weight', 'both'][index] : ['seal', 'weight', 'seal', 'weight', 'both'][slot];
   const bad = first ? [false, true, false, true, true][index] : (index % 2 === shift % 2);
   const port = pick(3);
   const reference = { ...SEALS[port] };
@@ -37,7 +39,7 @@ export function makeCase(seed, shift, index, berth = false) {
   const premium = berth && index % 2 === 0;
   const c = { id: `${seed}-${shift}-${index}`, type, checks: type === 'both' ? ['seal', 'weight'] : [type], captain: pick(3), port, reference, presented, declared, actual,
     cargo: premium ? 'trade-chest' : pick(2) ? 'wooden-crate' : 'cloth-bundle', goods: premium ? 'Fine instruments' : 'Merchant supplies', premium,
-    reward: premium ? ECONOMY.premium : ECONOMY.shipment, review: index === 1 || index === 4 };
+    reward: premium ? ECONOMY.premium : ECONOMY.shipment, review: slot === 1 || slot === 4 };
   const correct = correctVerdict(c);
   c.recommendation = index === 1 ? (correct === 'clear' ? 'hold' : 'clear') : correct;
   return c;
@@ -62,7 +64,7 @@ export function validateCase(c) {
   return c.checks.length > 0 && c.checks.every(x => ['seal', 'weight'].includes(x)) && Number.isInteger(c.actual) && c.actual > 0 && c.actual <= 30 && Number.isInteger(c.declared) && c.declared > 0 && c.reward > 0 && [c.reference, c.presented].every(s => ['anchor', 'ship', 'compass'].includes(s.symbol) && s.marks >= 1 && s.marks <= 4 && ['single', 'double'].includes(s.border));
 }
 export function initialState(seed = 28471) {
-  return { version: 2, seed, coins: 0, trained: false, berth: false, shift: 1, index: 0, cases: Array.from({ length: 5 }, (_, i) => makeCase(seed, 1, i)), results: [], history: [], screen: 'harbor', briefed: false, introduced: false, tab: 'seal', weights: [], measured: null, sealFocus: null, checked: [], events: [], activeMs: 0 };
+  return { version: 3, remainingMs: SHIFT_MS, started: false, ended: false, paused: false, shiftBerth: false, seed, coins: 0, trained: false, berth: false, shift: 1, index: 0, cases: Array.from({ length: 5 }, (_, i) => makeCase(seed, 1, i)), results: [], history: [], screen: 'harbor', briefed: false, introduced: false, tab: 'seal', weights: [], measured: null, sealFocus: null, checked: [], events: [], activeMs: 0 };
 }
 export function currentCase(s) { return s.cases[s.index]; }
 export function readyToJudge(s) {
@@ -72,8 +74,9 @@ export function readyToJudge(s) {
 export function dailyRules(s) {
   return {
     title: `Daily rules · Shift ${s.shift}`,
-    note: s.shift === 1 ? 'Opening day: compare seals first, then learn the scales. The final arrival needs both checks.' : s.berth ? 'The improved berth welcomes premium shipments. Apply the same checks to every captain.' : 'A new tide brings five arrivals. Review Mara’s recommendations against the evidence.',
+    note: s.shift === 1 ? 'Opening day: compare seals first, then learn the scales. The fifth arrival needs both checks; more follow while time remains.' : s.berth ? 'The improved berth welcomes premium shipments. Apply the same checks to every captain.' : 'Arrivals continue until the tide turns. Review Mara’s recommendations against the evidence.',
     entries: [
+      ['hold', 'Three minutes until the tide turns', 'The clock starts at your first inspection. Planning, references and pause stop time. At zero, finish only the cargo already on your desk.'],
       ['seal', 'Official seals must match', 'Compare the emblem, dots, and rings with the official reference. Mark the seal inspected when you have checked it.'],
       ['scale', 'Gross weight must match exactly', 'Balance the cargo using reference weights. The declared weight includes packaging. No weight discrepancy is permitted.'],
       ['check', 'Complete every required check', 'A seal-only or weight-only arrival needs one check. When both are listed, complete both before choosing CLEAR or HOLD.'],
@@ -89,18 +92,30 @@ function event(s, type, detail = {}) { s.events = [...s.events.slice(-499), { ty
 export function reduce(state, action) {
   const s = structuredClone(state);
   const c = currentCase(s);
+  if (s.paused && !['resume', 'harbor'].includes(action.type)) return state;
   switch (action.type) {
+    case 'pause': s.paused = true; break;
+    case 'resume': s.paused = false; break;
+    case 'tick': {
+      if (!s.started || s.ended || !['introduction', 'inspection', 'result'].includes(s.screen)) break;
+      const delta = Number(action.ms);
+      if (!Number.isFinite(delta) || delta <= 0) break;
+      s.remainingMs = Math.max(0, s.remainingMs - delta);
+      if (s.remainingMs === 0 && s.screen === 'introduction') { s.ended = true; s.screen = 'summary'; event(s, 'shift_complete'); }
+      break;
+    }
     case 'start':
-      s.screen = s.index >= 5 ? 'summary' : s.results.length > s.index ? 'result' : !s.briefed ? 'briefing' : !s.introduced ? 'introduction' : 'inspection';
+      s.screen = s.ended ? 'summary' : s.results.length > s.index ? 'result' : !s.briefed ? 'briefing' : !s.introduced ? 'introduction' : 'inspection';
       if (c && !c.checks.includes(s.tab)) s.tab = c.checks[0];
       event(s, 'inspection_open'); break;
     case 'acknowledgeRules':
       if (s.screen !== 'briefing') break;
       s.briefed = true; s.screen = s.introduced ? 'inspection' : 'introduction'; event(s, 'rules_acknowledged'); break;
     case 'beginInspection':
-      if (s.screen !== 'introduction' || !s.briefed) break;
+      if (s.screen !== 'introduction' || !s.briefed || s.remainingMs <= 0 || s.ended) break;
+      s.started = true;
       s.introduced = true; s.screen = 'inspection'; s.tab = c.checks[0]; event(s, 'captain_introduced'); break;
-    case 'harbor': s.screen = 'harbor'; break;
+    case 'harbor': s.paused = false; s.screen = 'harbor'; break;
     case 'tab':
       if (c && c.checks.includes(action.tab)) { s.tab = action.tab; event(s, 'tool_open', { tool: action.tab }); } break;
     case 'focus': if (c && ['symbol', 'marks', 'border'].includes(action.part)) { s.sealFocus = action.part; event(s, 'seal_focus', { part: action.part }); } break;
@@ -128,15 +143,21 @@ export function reduce(state, action) {
     }
     case 'next':
       if (s.screen !== 'result') break;
+      if (s.remainingMs <= 0) {
+        s.ended = true; s.screen = 'summary';
+        event(s, 'shift_complete', { correct: s.results.filter(r => r.correct).length });
+        break;
+      }
       s.index++; s.weights = []; s.measured = null; s.checked = []; s.sealFocus = null; s.introduced = false;
-      s.screen = s.index === 5 ? 'summary' : !s.briefed ? 'briefing' : 'introduction';
-      if (s.index < 5) s.tab = currentCase(s).checks[0];
-      else event(s, 'shift_complete', { correct: s.results.filter(r => r.correct).length });
+      if (!s.cases[s.index]) s.cases.push(makeCase(s.seed, s.shift, s.index, s.shiftBerth));
+      s.screen = 'introduction'; s.tab = currentCase(s).checks[0];
       break;
     case 'nextShift':
-      if (s.index !== 5) break;
+      if (!s.ended) break;
       s.history = [...s.history.slice(-19), { shift: s.shift, results: s.results }];
       s.shift++; s.index = 0; s.results = []; s.weights = []; s.measured = null; s.checked = []; s.sealFocus = null;
+      s.shiftBerth = s.berth;
+      s.remainingMs = SHIFT_MS; s.started = false; s.ended = false; s.paused = false;
       s.cases = Array.from({ length: 5 }, (_, i) => makeCase(s.seed, s.shift, i, s.berth));
       s.tab = s.cases[0].checks[0]; s.screen = 'briefing'; s.briefed = false; s.introduced = false; event(s, 'next_shift'); break;
     case 'train':
@@ -150,21 +171,6 @@ export function reduce(state, action) {
 export function restore(raw) {
   try {
     const s = JSON.parse(raw);
-    if (!s || ![1, 2].includes(s.version) || !Number.isSafeInteger(s.seed) || !Number.isSafeInteger(s.coins) || s.coins < 0 || typeof s.trained !== 'boolean' || typeof s.berth !== 'boolean' || !Number.isInteger(s.shift) || s.shift < 1 || !Number.isInteger(s.index) || s.index < 0 || s.index > 5) return null;
-    if (!Array.isArray(s.cases) || s.cases.length !== 5 || !s.cases.every(validateCase) || !Array.isArray(s.results) || s.results.length > 5 || s.results.length < s.index || s.results.length > s.index + 1 || !Array.isArray(s.weights) || !s.weights.every(w => [1, 2, 5, 10].includes(w)) || totalWeight(s.weights) > 30 || !Array.isArray(s.events) || !Array.isArray(s.history) || !Array.isArray(s.checked)) return null;
-    if (!['harbor', 'briefing', 'introduction', 'inspection', 'result', 'summary'].includes(s.screen)) return null;
-    if (s.version === 1) {
-      // Preserve earnings and evidence. Existing active cases get the new briefing
-      // and introduction before resuming; already paid results remain paid.
-      s.version = 2; s.briefed = false; s.introduced = false;
-      if (s.screen === 'inspection') s.screen = 'briefing';
-    }
-    if (typeof s.briefed !== 'boolean' || typeof s.introduced !== 'boolean') return null;
-    if (s.index === 5) s.screen = s.screen === 'harbor' ? 'harbor' : 'summary';
-    else if (s.results.length > s.index && s.screen !== 'harbor') s.screen = 'result';
-    else if (s.screen === 'result' || s.screen === 'summary') return null;
-    else if (s.screen === 'introduction' && !s.briefed) s.screen = 'briefing';
-    else if (s.screen === 'inspection' && (!s.briefed || !s.introduced)) s.screen = !s.briefed ? 'briefing' : 'introduction';
-    return s;
+    return s?.version === 3 && Number.isFinite(s.remainingMs) && s.remainingMs >= 0 && s.remainingMs <= SHIFT_MS && s.coins >= 0 ? s : null;
   } catch { return null; }
 }

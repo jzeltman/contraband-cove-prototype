@@ -1,61 +1,42 @@
-# Contraband Cove prototype
+# Contraband Cove prototype · 0.3.0
 
-A framework-free HTML/CSS/JavaScript mobile-first inspection game in the **Brass & Timber** style. No build dependencies, accounts, ads, timers, or offline income.
+A mobile-first HTML/CSS/JavaScript inspection game in the Brass & Timber style. The current experiment tests three-minute shifts and the new composable artwork. One cargo per captain; no storage or multi-lot gameplay yet.
 
-## Run and test
+## Play
+
+- Read the briefing and meet the captain. The timer starts when you begin the first inspection.
+- Inspect seals and manually balance cargo; complete every required check before CLEAR/HOLD.
+- Arrivals continue while time remains. At zero, finish only an inspection already started. If time expires during an introduction, the shift ends; result feedback stays readable until you finish the shift.
+- Pause, harbor planning, reference/help dialogs and backgrounding stop time. There is no offline income.
+- Correct judgments pay 20 coins (35 premium) plus clerk credit; errors pay zero and never deduct coins. Existing training (60) and premium berth (120) remain available. Hiring and parallel staff work are later issues.
+- View actual inspection counts and earnings, then start another shift.
+
+Three minutes is a provisional playtest value in `SHIFT_MS`. Prototype saves use a new key, `contraband-cove.save.v3`; older prototype progress is not migrated. Current progress and remaining time save locally. Clearing browser data resets progress.
+
+## Run and verify
 
 Requires Node 22+.
 
 ```sh
 npm start
-# Open http://localhost:4173
 npm test
 npm run build
+# Install Playwright and Chromium, then:
+node tests/browser-smoke.cjs
 ```
 
-The build copies only runtime files to `dist/`; original art and tests are excluded. The app also runs directly from any static HTTP server. Relative paths support the GitHub Pages project subdirectory.
+Browser tests cover verdict gates, timer/pause/background behavior, expiry, rewards, reload, offline launch, narrow/desktop layouts and simulated iPhone insets. `CHROMIUM_PATH` can select an installed browser; `CHROMIUM_SINGLE_PROCESS=1` accommodates restricted local environments. Physical iPhone/Android testing remains necessary.
 
-## Included
+## Architecture and art
 
-- A daily rules briefing at the start of every shift, followed by a portrait/flavor/declaration introduction for every captain.
-- Verdicts unlock only when all required inspections are complete: explicitly mark the seal; balance the cargo to record weight. Completion does not mean the shipment passes.
-- Persistent captain portrait and gameplay header with Declaration and Daily rules dialogs; logo is hidden during gameplay.
+`src/game.js` owns deterministic cases, progression and timer transitions. `src/app.js` owns live UI, monotonic clock sampling, persistence and reference dialogs. `visual-refresh.css` layers the mockup direction over the existing layout and safe-area styles. Seal emblems, dots and rings remain live evidence, and the scale uses movable components.
 
-- Deterministic seal comparisons: emblem, dots, and rings.
-- Balance scale: tap to add/remove 1/2/5/10 kg reference weights; beam and upright pans follow the heavier side.
-- Five-ship shifts with separate introductions, mixed cases, and clerk recommendations.
-- Immediate explanations. Incorrect judgments give zero income and never remove existing coins.
-- Local per-action saves, resume, protected repeated verdicts/purchases, and shift reports.
-- Mara training and a visibly expanded berth unlocking premium cargo next shift.
-- PWA manifest, offline runtime cache, install instructions, explicit update prompt, and local playtest export.
+Optimized artwork in `assets/art/runtime/ui` is derived from the committed Brass & Timber pack (about 0.8 MB). Only runtime art ships; source sprites, mockups and originals do not enter the build/cache. The existing three captain variants remain available. The hourglass is static artwork with live time text.
 
-## Pages deployment
+## Deployment and roadmap
 
-In repository **Settings → Pages**, select **GitHub Actions** as the build source. The workflow tests and publishes `dist/` on pushes to `main` or manual dispatch. Private-repository Pages availability depends on the account plan; do not change repository visibility without owner approval. The successful deployment job reports the actual test URL.
+The existing GitHub Actions workflow tests and deploys `dist/` to GitHub Pages on `main`. Build and service-worker cache versions advance together. Installed users can apply the downloaded update through Help.
 
-## Playtest economy (provisional)
+[Roadmap #1](https://github.com/jzeltman/contraband-cove-prototype/issues/1): timer/UI (#21/#22), then cargo batches (#23), hiring (#20), visible delegation (#24), handling/storage (#25), and harbor expansion (#26).
 
-| Item | Coins |
-| --- | ---: |
-| Correct normal / premium shipment | 20 / 35 |
-| Clerk credit per correct verdict, before / after training | 2 / 6 |
-| Incorrect verdict, shipment and clerk credits | 0 |
-| Training / berth purchase | 60 / 120 |
-
-The staff credit is tied to successful work rather than elapsed time. This is an implementation assumption for owner review, not a finalized economy. Every completed five-ship shift can immediately be followed by another. Upgrades have no waiting period.
-
-## State, evidence, privacy
-
-`src/game.js` owns cases, scoring, progression, and pure state transitions. `src/app.js` renders UI and handles browser persistence. `styles.css` contains the style tokens and responsive components. Seal SVG is generated from case data; weights are not exposed numerically until balanced or after judgment.
-
-The first shift is curated; later shifts are seeded and replayable. All current rules appear in the app. A mismatch requires HOLD for verification, not an accusation of criminal guilt. A clerk recommendation is explicitly unverified and may be wrong.
-
-Saves are versioned and device/browser-specific. Version 2 migrates existing version 1 coins, upgrades, results, and evidence; unfinished cases first show the new briefing/introduction. The storage key stays unchanged for compatibility. Invalid saves are backed up locally before fresh state is used. Clearing browser data loses progress. No gameplay data is transmitted; testers can export a JSON log from the handbook or shift report. Duration excludes time while the page is hidden. It is not an inactivity-aware analytics SDK.
-
-Daily briefings currently restate the stable prototype rules, with shift-specific context. Rotating legal exceptions are not implemented. References remain accessible throughout play.
-
-## Update process
-
-Increment the `BUILD` constant and service-worker cache version together. A new worker caches the complete runtime before becoming available; the user applies it from the handbook. Save format changes need a migration. No original PNGs enter the precache.
-
-See [art integration notes](assets/art/README.md), [prototype decisions](docs/prototype-decisions.md), and [playtest checklist](docs/playtest.md). Physical iOS/Android install and return-session testing remains a release gate, not something desktop emulation proves.
+The aim is to test fun and readability before expanding scope. No accounts, remote analytics, monetization or offline earnings. Optional playtest exports stay local until the tester shares them.

@@ -76,7 +76,8 @@ test('every captain has an introduction and every new shift has a briefing',()=>
   if(i){assert.equal(s.screen,'introduction');s=reduce(s,{type:'beginInspection'});}
   s=complete(s);s=reduce(s,{type:'judge',verdict:correctVerdict(currentCase(s))});s=reduce(s,{type:'next'});
  }
- assert.equal(s.screen,'summary');assert.equal(s.coins,110);
+ assert.equal(s.screen,'introduction');assert.equal(s.coins,110);
+ s=reduce(s,{type:'tick',ms:180000});assert.equal(s.screen,'summary');
  s=reduce(s,{type:'nextShift'});assert.equal(s.screen,'briefing');assert.equal(s.shift,2);assert.equal(s.briefed,false);assert.equal(s.introduced,false);
  assert.equal(s.history.length,1);assert.equal(dailyRules(s).title,'Daily rules · Shift 2');
 });
@@ -88,7 +89,7 @@ test('training and berth purchases remain affordable and idempotent',()=>{
 });
 test('berth upgrade changes next shift cargo only',()=>{
  let s=initialState();s.coins=120;s=reduce(s,{type:'upgrade'});assert.ok(s.cases.every(c=>!c.premium));
- s.index=5;s=reduce(s,{type:'nextShift'});assert.ok(s.cases.some(c=>c.premium&&c.reward===35));
+ s.ended=true;s=reduce(s,{type:'nextShift'});assert.ok(s.cases.some(c=>c.premium&&c.reward===35));
 });
 test('weight evidence persists after balancing, removing, and resetting weights',()=>{
  let s=initialState();s.index=2;s=begin(s);const actual=currentCase(s).actual;
@@ -107,15 +108,42 @@ test('harbor resumes briefing, introduction, tool state, and result',()=>{
   if(stage==='inspection'){s=complete(s);s=reduce(s,{type:'judge',verdict:'clear'});}
  }
 });
-test('version 1 saves migrate coins, upgrades and evidence without replaying rewards',()=>{
- let old=complete(begin());old.version=1;delete old.briefed;delete old.introduced;old.coins=57;old.berth=true;
- let s=restore(JSON.stringify(old));assert.equal(s.version,2);assert.equal(s.screen,'briefing');assert.equal(s.coins,57);assert.ok(s.berth);assert.deepEqual(s.checked,['seal']);
- s=begin(s);s=reduce(s,{type:'judge',verdict:'clear'});const paid=s.coins;
- s.version=1;delete s.briefed;delete s.introduced;s=restore(JSON.stringify(s));assert.equal(s.screen,'result');assert.equal(s.coins,paid);
- s=reduce(s,{type:'next'});assert.equal(s.screen,'briefing');s=begin(s);assert.equal(s.screen,'inspection');
-});
 test('invalid saves rejected and completed evidence persists',()=>{
  assert.equal(restore('broken'),null);assert.equal(restore('{"version":100}'),null);
  let s=complete(begin());assert.deepEqual(restore(JSON.stringify(s)),s);s.coins=-1;assert.equal(restore(JSON.stringify(s)),null);
 });
 test('time alone never awards coins',()=>{const s=initialState();assert.equal(reduce(s,{type:'tick',seconds:999999}).coins,0);assert.equal(restore(JSON.stringify(s)).coins,0);});
+
+
+test('clock waits for first inspection and arrivals continue beyond five',()=>{
+ let s=initialState();s=reduce(s,{type:'tick',ms:180000});assert.equal(s.remainingMs,180000);
+ s=begin(s);
+ for(let i=0;i<12;i++){
+  assert.ok(validateCase(currentCase(s)));
+  s=complete(s);s=reduce(s,{type:'judge',verdict:correctVerdict(currentCase(s))});s=reduce(s,{type:'next'});
+  assert.equal(s.screen,'introduction');s=reduce(s,{type:'beginInspection'});
+ }
+ assert.equal(s.results.length,12);assert.equal(s.ended,false);
+});
+test('expiry permits only the active inspection and never pays twice',()=>{
+ let s=begin();s=reduce(s,{type:'tick',ms:180001});assert.equal(s.remainingMs,0);assert.equal(s.screen,'inspection');
+ s=reduce(s,{type:'harbor'});s=reduce(s,{type:'start'});assert.equal(s.screen,'inspection');
+ s=complete(s);s=reduce(s,{type:'judge',verdict:'clear'});assert.equal(s.coins,22);
+ s=reduce(s,{type:'judge',verdict:'clear'});assert.equal(s.coins,22);
+ s=reduce(s,{type:'next'});assert.equal(s.screen,'summary');assert.equal(s.results.length,1);
+ s=reduce(s,{type:'beginInspection'});assert.equal(s.screen,'summary');
+ s=reduce(s,{type:'nextShift'});assert.equal(s.remainingMs,180000);assert.equal(s.started,false);assert.equal(s.coins,22);
+});
+test('expiry at introduction starts no inspection; result retains feedback',()=>{
+ let s=complete(begin());s=reduce(s,{type:'judge',verdict:'clear'});
+ const result=reduce(s,{type:'tick',ms:180000});assert.equal(result.screen,'result');assert.equal(reduce(result,{type:'next'}).screen,'summary');
+ s=reduce(s,{type:'next'});s=reduce(s,{type:'tick',ms:180000});assert.equal(s.screen,'summary');assert.equal(s.results.length,1);
+});
+test('pause and planning freeze time and cannot award income',()=>{
+ let s=begin();s=reduce(s,{type:'tick',ms:1000});assert.equal(s.remainingMs,179000);
+ s=reduce(s,{type:'pause'});s=reduce(s,{type:'tick',ms:90000});assert.equal(s.remainingMs,179000);
+ s=reduce(s,{type:'checked',check:'seal'});assert.deepEqual(s.checked,[]);
+ s=reduce(s,{type:'resume'});s=reduce(s,{type:'harbor'});s=reduce(s,{type:'tick',ms:90000});assert.equal(s.remainingMs,179000);
+ s=reduce(s,{type:'start'});s=reduce(s,{type:'tick',ms:1000});assert.equal(s.remainingMs,178000);assert.equal(s.coins,0);
+ const saved=restore(JSON.stringify(s));assert.equal(saved.remainingMs,178000);
+});

@@ -1,0 +1,47 @@
+/* Brass & Timber: live controls composed over the new artwork. */
+:root{--gameplay-header-height:128px}
+.gameplay-header{display:flex;flex-direction:column;gap:0;padding-left:max(18px,var(--safe-area-left));padding-right:max(18px,var(--safe-area-right));height:calc(var(--gameplay-header-height) + var(--safe-area-top));background:linear-gradient(110deg,#183b48,#071e2c);border-bottom:2px solid #cba159}
+.timer-row{height:78px;min-height:78px;display:flex;width:100%;align-items:center;justify-content:space-between;max-width:850px;margin:auto}
+.round-btn{width:48px;height:48px;border:3px double #d4af68;box-shadow:0 2px 5px #0008,inset 0 0 0 2px #264b54;background:radial-gradient(at 40% 25%,#235665,#0a2635);color:#f6dfac}
+.tide-clock{display:flex;align-items:center;justify-content:center;gap:8px;min-width:176px;height:66px;padding:3px 15px 3px 6px;border:3px double #d8b36e;box-shadow:inset 0 0 0 2px #304854,0 3px 5px #0005;background:#0b2332;border-radius:7px;text-align:center}
+.tide-clock img{height:66px;width:48px;object-fit:contain;filter:drop-shadow(0 2px 2px #0009)}
+.tide-clock strong{font-family:var(--serif);font-size:34px;line-height:1;font-variant-numeric:tabular-nums;letter-spacing:1px;color:#fff1d3}
+.tide-clock small{display:block;font-size:10px;line-height:1.5;color:#f0d6a0;white-space:nowrap}
+.tide-clock.low-time{border-color:#e3a173}.tide-clock.low-time strong{color:#ffd3a8}
+.reference-nav{height:48px;min-height:48px;flex:none;width:min(100%,540px);gap:0;margin:0 auto;background:#eedbb4;border:3px double #9e7941;border-bottom:0;border-radius:5px 5px 0 0;box-shadow:0 -2px 9px #0003}
+.header-btn{flex:1;color:#202e32;background:transparent;border:0;border-radius:0;font-family:var(--serif);font-size:17px;min-height:44px;padding:7px;gap:9px}.header-btn+.header-btn{border-left:1px solid #b49461}.header-btn .icon{color:#6c512f;width:20px;height:20px}
+.inspection{background:linear-gradient(#17364718,#172e3750),url('./assets/art/runtime/ui/inspection-harbor.webp') center top/cover fixed}
+.inspection-presence{height:175px;top:calc(var(--gameplay-header-height) + var(--safe-area-top));padding:18px 38px;box-shadow:0 4px 8px #14232c55;align-items:center}
+.presence-water{background:linear-gradient(90deg,#102a36e8, #102a3670 48%,transparent),url('./assets/art/runtime/ui/inspection-harbor.webp') center 45%/cover}
+.presence-status{max-width:65%;text-shadow:0 2px 4px #0008}.presence-status h1{font-size:30px;max-width:440px}.presence-status .eyebrow{color:#ffe3a9}
+.persistent-captain{height:230px;width:205px;right:8%;top:3px;object-fit:contain;object-position:top;filter:drop-shadow(-5px 4px 5px #10242f60)}
+.inspection-v2 .work-area{max-width:840px;padding:18px 24px 24px}
+.panel,.evidence-panel{border:12px solid transparent;border-image:url('./assets/art/runtime/ui/panel-parchment.webp') 50 fill stretch;box-shadow:0 5px 15px #10202945;background:#f0dfb8}
+.evidence-panel{padding:12px 18px 16px}.tool-title{justify-content:center;text-align:center;border-bottom:1px solid #9d7d4366;padding-bottom:12px}.tool-title>.icon,.tool-title .eyebrow{display:none}.tool-title h2{font-weight:700;font-size:34px;color:#17262b}.tool-instruction{text-align:center;margin-top:12px}
+.btn.teal,.btn.navy,.btn.clay{border:10px solid transparent;border-image:url('./assets/art/runtime/ui/button-navy.webp') 28 46 fill stretch;border-radius:0;background:none;box-shadow:0 3px 6px #10202955;padding:8px 13px;color:#fff1d4;font-family:var(--serif);font-size:18px;min-height:54px}
+.btn.teal{border-image-source:url('./assets/art/runtime/ui/button-teal.webp')}.btn.clay{border-image-source:url('./assets/art/runtime/ui/button-terracotta.webp')}.btn.navy:before,.btn.navy:after{display:none}
+.tool-tabs{background:#102d39ed;border:1px solid #c5a261;padding:5px;border-radius:5px;color:#f4dfb6}.tool-tabs .btn{color:#efd9ae;border-color:transparent;font-size:12px;min-height:44px}.tool-tabs .btn.active{background:#eedcb7;color:#253236;border-color:#b99350}.tool-tabs>span{color:#eedbb7}
+.seal-pair{gap:15px}.seal-sheet{position:relative;background:#ecd6a9 url('./assets/art/runtime/ui/reference-parchment.webp') center/100% 100%;border:2px solid #ae894c;box-shadow:0 2px 5px #58462444;border-radius:2px;order:2}
+.seal-sheet.presented{order:1;background:linear-gradient(#33221320,#33221388),url('./assets/art/runtime/ui/inspection-crate.webp') center/cover,#785332;color:#fff0c9}
+.seal-sheet>.eyebrow{background:#173a42;border:2px double #c9a25e;box-shadow:0 2px 4px #0004;color:#fff2d2;padding:5px 3px;letter-spacing:.7px;font-size:10px;white-space:nowrap}.seal-sheet.presented small{color:#f3dfb7}
+.inspection-v2 .seal-art{width:100%;max-width:180px;filter:drop-shadow(0 3px 3px #451c16aa)}.seal-sheet strong{font-size:14px}.seal-sheet small{font-size:10px}
+.focus-row .btn{min-height:44px;background:#f9eacb;border:1px solid #ad8b52}.focus-row .btn.selected{background:#d4e3cc;border:2px solid #426b5d}
+.scale-stage{background:linear-gradient(#f1e1be10,#f1e1be50),url('./assets/art/runtime/ui/inspection-harbor.webp') center/cover;border:1px solid #bb9a62;border-radius:4px}.scale-status{background:#153e44;color:#f6e4bd;border:3px double #c7a25a;margin:10px 0}.scale-status.balanced{background:#20584e;color:#ffedc6}.scale-status>span{color:inherit}
+.weight-btn{height:64px;border:8px solid transparent;border-image:url('./assets/art/runtime/ui/button-navy.webp') 28 46 fill stretch;background:none;border-radius:0}.weight-btn img{display:none}.weight-btn>span{position:static;font-family:var(--serif);font-size:19px;color:#ffedc9}.placed-weights button{min-width:44px;min-height:44px}
+.verdict-bar{background:#eedcb8;border-top:3px double #a17e45;max-width:840px;margin:auto}.verdict-actions{gap:12px}.verdict-actions .btn{font-size:23px;min-height:62px}
+.introduction-page,.briefing-page{background:linear-gradient(#0f2c3b40,#102d38bd),url('./assets/art/runtime/ui/inspection-harbor.webp') center/cover}.intro-portrait{height:300px}.intro-copy{text-shadow:0 2px 5px #10232c}.intro-paperwork .manifest{border-width:12px}
+.management{background:linear-gradient(#f3e5cbbb,#e0c899cc),url('./assets/art/runtime/ui/inspection-harbor.webp') center/cover}.upgrade-card{border-width:10px}.upgrade-portrait img{object-fit:contain;object-position:bottom}.upgrade-info .btn{font-size:15px}
+.ship-results{flex-wrap:wrap}.pause-overlay{position:fixed;inset:0;z-index:50;background:#071f2fea;backdrop-filter:blur(8px);display:grid;place-items:center;padding:24px max(20px,var(--safe-area-right)) max(24px,var(--safe-area-bottom)) max(20px,var(--safe-area-left));overflow:auto}.pause-panel{max-width:450px;padding:24px;text-align:center}.pause-panel>img{height:95px}.pause-panel h1{font-size:34px}.pause-panel p{margin:13px 0;font-size:14px}.pause-panel .btn{margin-top:12px}
+.app-shell:has(.pause-overlay)>:not(.pause-overlay){visibility:hidden}
+@media(max-width:650px){
+ :root{--gameplay-header-height:122px}
+ .gameplay-header{padding-left:max(10px,var(--safe-area-left));padding-right:max(10px,var(--safe-area-right))}.timer-row{height:74px;min-height:74px}.gameplay-header .round-btn{width:46px;height:46px}.tide-clock{height:62px;min-width:170px}.tide-clock img{height:62px}.tide-clock strong{font-size:31px}.header-btn{font-size:16px}.header-btn .icon{display:block;width:19px;height:19px}
+ .inspection-presence{height:130px;padding:12px 16px}.persistent-captain{height:172px;width:143px;right:2px;top:1px}.presence-status{max-width:calc(100% - 115px)}.presence-status h1{font-size:23px;margin:7px 0}.presence-status .eyebrow{font-size:8px}.check-progress>span{font-size:10px}
+ .inspection-v2 .work-area{padding:10px 8px 14px}.evidence-panel{border-width:9px;padding:8px 6px 12px}.tool-title h2{font-size:29px}.tool-instruction{font-size:12px;margin-top:9px}.tool-tabs{margin-bottom:8px}.tool-tabs .btn{font-size:11px;padding:7px 4px}
+ .seal-pair{gap:8px;margin:13px 0}.inspection-v2 .seal-sheet{padding:6px 4px 9px}.seal-sheet>.eyebrow{font-size:8px;letter-spacing:.3px}.inspection-v2 .seal-art{max-width:142px;margin:8px auto}.seal-sheet strong{font-size:12px}.seal-sheet small{font-size:9px}.focus-row{gap:5px}.focus-row .btn{font-size:11px;padding:8px}.evidence-panel>.btn{font-size:12px}
+ .verdict-bar{padding:9px 12px max(12px,var(--safe-area-bottom))}.verdict-actions .btn{font-size:21px;min-height:56px;padding:5px}.inspection-pending .btn{font-size:11px}.weight-btn{height:58px}.weight-btn>span{font-size:17px}.scale-status{font-size:11px}.scale-status>span{font-size:10px}.intro-portrait{height:220px}.upgrade-info .btn{font-size:13px;padding:6px}.pause-panel{padding:18px}
+ .inspection-v2 .tool-tabs{scroll-margin-top:calc(var(--gameplay-header-height) + var(--safe-area-top) + 140px)}
+}
+@media(prefers-reduced-motion:reduce){*{scroll-behavior:auto!important;transition:none!important}}
+.weight-btn{padding:0}.weight-btn>span{white-space:nowrap}
+@media(max-width:360px){.weight-btn>span{font-size:14px}.header-btn{font-size:14px}.tide-clock{min-width:156px}}

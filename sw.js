@@ -1,7 +1,7 @@
-const CACHE = 'contraband-cove-v0.2.1';
+const CACHE = 'contraband-cove-v0.3.0';
 const ROOT = new URL('./', self.location).href;
 const FILES = ['','index.html','styles.css','src/app.js','src/game.js','manifest.webmanifest','assets/icon.svg','assets/icon-192.png','assets/icon-512.png',...['inspection-dock','inspection-desk','harbor-overview','berth-upgrade','mara-neutral','mara-pleased','merchant-captain','weathered-sailor','well-dressed-trader','wooden-crate','cloth-bundle','trade-chest','scale-stand','scale-beam','scale-pan','reference-weight'].map(n => `assets/art/runtime/${n}.webp`)];
-FILES.push('safe-area.css');
+FILES.push('safe-area.css', 'visual-refresh.css', ...['panel-parchment', 'captain-merchant', 'seal-wax-blank', 'hourglass-half', 'mara-clerk', 'inspection-harbor', 'button-terracotta', 'inspection-crate', 'reference-parchment', 'button-teal', 'button-navy', 'cargo-cloth', 'cargo-chest', 'cargo-crates'].map(n => `assets/art/runtime/ui/${n}.webp`));
 self.addEventListener('install', event => event.waitUntil(caches.open(CACHE).then(cache => cache.addAll(FILES.map(p => new URL(p, ROOT).href)))));
 self.addEventListener('activate', event => event.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith('contraband-cove-') && k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())));
 self.addEventListener('message', event => { if (event.data?.type === 'SKIP_WAITING') self.skipWaiting(); });

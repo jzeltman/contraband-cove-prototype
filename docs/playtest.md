@@ -1,29 +1,15 @@
-# First review build
+# Timer and Brass & Timber playtest · 0.3.0
 
-## Confirmed style
+1. Open a fresh prototype. The briefing and first captain introduction do not consume time.
+2. Begin inspection: three-minute clock runs. Complete seals, weighing and combined checks. Evidence, declaration and verdict controls should remain readable on your phone.
+3. Pause and resume. Open Declaration/Daily rules; time pauses. Visit harbor planning; time pauses. Background and reopen; no offline time or earnings.
+4. Complete more than five arrivals quickly; the shift must continue while time remains.
+5. Let time expire during inspection; finish that cargo and receive one payment. No next arrival. Try expiry at an introduction and at result feedback too.
+6. Make an incorrect verdict: zero reward, no deduction. Reload a result: no duplicate reward. Reload an unfinished inspection: recorded evidence and remaining time remain.
+7. Train Mara and improve the berth. Premium cargo starts next shift. Hiring and parallel work are not implemented in this increment.
+8. Load online, install the PWA, reopen offline. Apply an update through Help. Verify on physical iPhone and Android, including safe areas and text zoom.
+9. Export the local playtest log if useful.
 
-Brass & Timber: navy painted panels, warm parchment, restrained brass edging/rivets, teal CLEAR, terracotta HOLD, serif headings with system-sans body text. Functional controls remain live HTML/CSS; evidence is not baked into images. Existing generated WebP art is reused.
+Questions: Is three minutes rushed, comfortable or too long? Does the new scene make the inspection clearer? Does finishing the active cargo at closing feel fair? Do you want another shift?
 
-## Review checklist
-
-1. Start a new save. Compare the first two seals, including the incorrect clerk recommendation.
-2. Balance both weight cases using taps. Check that heavier cargo lowers the left pan and heavier references lower the right.
-3. Complete the combined case. A passing seal cannot cancel a weight discrepancy (or vice versa).
-4. Make one incorrect verdict; verify zero reward and no coin deduction. Reload the result and ensure it does not pay twice.
-5. Finish five ships, train Mara after earning 60 coins, and continue immediately.
-6. Buy the 120-coin berth, see the crane/berth overlay, then begin a new shift to see premium shipments.
-7. Reload during an unfinished case and at the summary. Check state and evidence persist.
-8. Load online, install where supported, close/reopen, and test airplane-mode launch. Verify no offline income.
-9. Test a real narrow Android phone and Safari on an iPhone, text zoom, background/resume, and an installed PWA update.
-10. Export the local log. Ask: would you play another shift, and did the next improvement matter?
-
-## Provisional choices to review
-
-- Clerk credit is awarded per **correct** inspection (2 coins, 6 after training), rather than on a clock. This preserves zero earnings for incorrect judgments and prevents timer farming.
-- Training costs 60; berth costs 120. Normal/premium shipment payouts are 20/35. These are test values.
-- No cloud analytics or hosted feedback form is configured. Log export is voluntary and local.
-- The two prototype progression upgrades are finite. No monetization or new-content promises are implied.
-
-## Evidence required before production
-
-Agree testers, device coverage, budget/time cap, and continue/revise/stop criteria. Observe a first and return session. Record sample size and confusion points. Desktop automation does not establish fun, retention, install reliability on physical devices, or product-market fit.
+Automated browser checks do not establish enjoyment or physical-device reliability. No migration of older prototype saves is required for this experiment.

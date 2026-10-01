@@ -1,6 +1,6 @@
 # Brass & Timber — composable art pack
 
-Imagery-only preparation for the proposed unloading, inspection, timed-shift, dockside storage, and upgrade screens. **Not integrated into gameplay.** Current runtime files, build configuration, service worker, economy, and game rules are unchanged. This directory is outside `assets/art/runtime`, so the current build does not publish or precache it.
+Source artwork for unloading, inspection, timed-shift, dockside storage, and upgrade screens. **Selected inspection/UI assets are integrated in prototype 0.3.0** through optimized copies in `assets/art/runtime/ui`. This source directory is not published or precached. Storage and the larger upgrade tree remain future work. The original art-only commit preserved gameplay unchanged; timer/UI integration is tracked in #21 and #22.
 
 ## Contents
 
