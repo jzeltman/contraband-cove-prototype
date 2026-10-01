@@ -1,6 +1,6 @@
 # Brass & Timber — composable art pack
 
-Source artwork for unloading, inspection, timed-shift, dockside storage, and upgrade screens. **Selected inspection/UI assets are integrated in prototype 0.4.0** through optimized copies in `assets/art/runtime/ui`. This source directory is not published or precached. The upgrade chart now supports live hiring, training and premium-berth purchases. Storage and the map’s explicitly future nodes remain later work. The original art-only commit preserved gameplay unchanged; timer/UI integration is tracked in #21/#22 and the upgrade map in #27.
+Source artwork for unloading, inspection, timed-shift, dockside storage, and upgrade screens. **Selected inspection/UI assets are integrated in prototype 0.5.0** through optimized copies in `assets/art/runtime/ui`. This source directory is not published or precached. The upgrade chart now supports live hiring, training and premium-berth purchases. The storage-ground plate now backs the live yard; three of its six spaces begin locked and unlock with expansion. The nine-space upgrade adds a labeled warehouse annex in the cargo grid. Second berth and lighthouse remain future work. The original art-only commit preserved gameplay unchanged; timer/UI integration is tracked in #21/#22 and the upgrade map in #27.
 
 ## Contents
 

@@ -143,7 +143,7 @@ test('premium berth affects new manifests only',()=>{
  assert.ok(s.ship.lots.some(l=>l.premium&&l.reward===ECONOMY.premium));
 });
 test('more than five arrivals work with no fixed shift count',()=>{
- let s=begin();for(let i=0;i<7;i++){s=resolveShip(begin(s));s=reduce(s,{type:'depart'});}
+ let s=begin();for(let i=0;i<7;i++){s=reduce(s,{type:'yard'});for(const x of s.yard)s=reduce(s,{type:'deliver',id:x.id});s=reduce(s,{type:'yardBack'});s=resolveShip(begin(s));s=reduce(s,{type:'depart'});}
  assert.equal(s.departures,7);assert.equal(s.ended,false);assert.equal(s.remainingMs,SHIFT_MS);
 });
 test('weight balance and combined evidence remain correct',()=>{

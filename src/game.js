@@ -1,6 +1,6 @@
-export const BUILD = '0.4.0';
-export const SAVE_KEY = 'contraband-cove.save.v4';
-export const SHIFT_MS = 180000;
+export const BUILD = '0.5.0';
+export const SAVE_KEY = 'contraband-cove.save.v5';
+export const SHIFT_MS = 60000;
 export const ECONOMY = Object.freeze({ shipment: 20, premium: 35, clerk: 2, trainedClerk: 6, hireCost: 80, trainingCost: 60, berthCost: 120 });
 export const CAPTAINS = [
   { name: 'Captain Finch', ship: 'The Copper Gull', art: 'merchant-captain', line: 'A fair wind and honest cargo. Take a look for yourself.' },
@@ -93,11 +93,49 @@ export function makeShipment(seed, serial, premium = false, single = false) {
   return { id: `${seed}-ship-${serial}`, captain, introduced: false, lots };
 }
 export function initialState(seed = 28471, single = false) {
-  return { version: 4, seed, single, serial: 0, ship: makeShipment(seed, 0, false, single), activeLot: 0,
+  return { version: 5, seed, single, serial: 0, ship: makeShipment(seed, 0, false, single), activeLot: 0,
     remainingMs: SHIFT_MS, started: false, ended: false, paused: false, overtimeLotId: null,
+    timeLevel: 0, warehouseLevel: 0, porter: false, transport: 0, yard: [], delivered: 0,
+    shipAdmitted: true, yardReturn: 'harbor', exportWait: [], exportElapsed: 0, exportSerial: 0, outbound: null, exportIncome: 0, exportDepartures: 0, notice: '',
     coins: 0, hired: false, trained: false, berth: false, shift: 1,
     results: [], history: [], departures: 0, screen: 'harbor', returnScreen: 'introduction',
     briefed: false, events: [], activeMs: 0, selectedUpgrade: 'mara' };
+}
+export function shiftDuration(s) { return SHIFT_MS + s.timeLevel * 30000; }
+export function yardCapacity(s) { return 3 + s.warehouseLevel * 3; }
+export function reservedSpaces(s) { return s.shipAdmitted ? s.ship.lots.filter(l => !l.result).length : 0; }
+export function exportRoom(s) { return yardCapacity(s) - s.yard.length - reservedSpaces(s); }
+export function canAdmitShip(s) { return s.shipAdmitted || yardCapacity(s) - s.yard.length >= s.ship.lots.filter(l => !l.result).length; }
+export function deliveryDuration(s) { return [8000, 4000, 2000][s.transport]; }
+export const DEVELOPMENT = {
+  time: { field: 'timeLevel', costs: [60, 120], max: 2 },
+  warehouse: { field: 'warehouseLevel', costs: [60, 120], max: 2 },
+  porter: { field: 'porter', costs: [80], max: 1 },
+  transport: { field: 'transport', costs: [80, 120], max: 2 }
+};
+export function developmentCost(s, id) { const d = DEVELOPMENT[id]; return d?.costs[Number(s[d.field])]; }
+function advanceLogistics(s, active) {
+  if (s.porter) {
+    let work = active;
+    for (const item of [...s.yard]) {
+      if (item.kind !== 'import') continue;
+      const used = Math.min(work, Math.max(0, deliveryDuration(s) - item.deliveryMs));
+      item.deliveryMs += used; work -= used;
+      if (item.deliveryMs >= deliveryDuration(s)) {
+        s.yard = s.yard.filter(x => x.id !== item.id); s.delivered++;
+        event(s, 'porter_delivery', { cargoId: item.id, destination: item.destination });
+      }
+      if (work <= 0) break;
+    }
+  }
+  s.exportElapsed += active;
+  while (s.exportElapsed >= 20000) {
+    s.exportElapsed -= 20000;
+    if (s.exportWait.length >= 2) continue;
+    const i = s.exportSerial++;
+    s.exportWait.push({ id: `export-${i}`, kind: 'export', goods: i % 2 ? 'Island spices' : 'Island cloth', cargo: i % 2 ? 'wooden-crate' : 'cloth-bundle', destination: PORTS[Math.floor(i / 2) % 3] });
+    event(s, 'export_arrival');
+  }
 }
 export function currentCase(s) { return s.ship.lots[s.activeLot]; }
 export function shipmentComplete(s) { return s.ship.lots.every(l => l.result); }
@@ -115,7 +153,8 @@ export function dailyRules(s) {
   return { title: `Daily rules · Shift ${s.shift}`,
     note: s.shift === 1 ? 'One captain, separate cargo decisions. Inspect the cloth seal and weigh the supply crate. Every third vessel adds an instrument chest.' : 'Unfinished cargo waits for you. Every lot still needs its own verdict.',
     entries: [
-      ['hold', 'Three minutes until the tide turns', 'The clock starts at your first inspection. Planning, references and pause stop time. At zero, finish only the selected cargo. Other lots wait for the next shift.'],
+      ['hold', `${shiftDuration(s)/1000} seconds until the tide turns`, 'The clock starts at your first inspection. Planning, references and pause stop time. At zero, finish only the selected cargo. Other lots wait for the next shift.'],
+      ['ship', 'Make room for the next ship', 'Tap the yard to deliver imports to town or secure custody. Exports share this space: unload island goods, then match them to outbound orders. Porters deliver imports while you work.'],
       ['seal', 'Official seals must match', 'Compare the emblem, dots and rings. Mark the seal inspected once you have checked it.'],
       ['scale', 'Gross weight must match exactly', 'Balance the cargo using reference weights. Declared weight includes packaging. No discrepancy is permitted.'],
       ['check', 'Each lot needs every required check', 'Switching cargo preserves your work. Certified checks by hired Mara count; a completed check does not mean the cargo passes.'],
@@ -132,7 +171,7 @@ function startLot(s, index) {
   s.started = true; s.ship.introduced = true; event(s, 'lot_open');
 }
 function newShip(s) {
-  s.serial++; s.ship = makeShipment(s.seed, s.serial, s.berth, s.single);
+  s.shipAdmitted = false; s.serial++; s.ship = makeShipment(s.seed, s.serial, s.berth, s.single);
   s.activeLot = s.hired && s.ship.lots.length > 1 ? 1 : 0;
 }
 export function reduce(state, action) {
@@ -142,10 +181,11 @@ export function reduce(state, action) {
     case 'pause': s.paused = true; break;
     case 'resume': s.paused = false; break;
     case 'tick': {
-      if (!s.started || s.ended || !['introduction', 'inspection', 'result', 'shipment'].includes(s.screen)) break;
+      if (!s.started || s.ended || !['introduction', 'inspection', 'result', 'shipment', 'yard', 'outbound'].includes(s.screen)) break;
       const delta = Number(action.ms);
       if (!Number.isFinite(delta) || delta <= 0) break;
       const active = Math.min(delta, s.remainingMs);
+      if (active > 0) advanceLogistics(s, active);
       const worker = workerTarget(s);
       if (worker) {
         worker.sealWorkMs = Math.min(workerDuration(s), worker.sealWorkMs + active);
@@ -160,7 +200,7 @@ export function reduce(state, action) {
       if (before > 0 && s.remainingMs === 0) {
         s.overtimeLotId = s.screen === 'inspection' && c.started && !c.result ? c.id : null;
         event(s, 'tide_turned', { overtimeLotId: s.overtimeLotId });
-        if (s.screen === 'introduction') endShift(s);
+        if (['introduction', 'yard', 'outbound'].includes(s.screen)) endShift(s);
       }
       break;
     }
@@ -172,7 +212,8 @@ export function reduce(state, action) {
       s.briefed = true; s.screen = 'introduction'; event(s, 'rules_acknowledged'); break;
     case 'beginInspection':
       if (s.screen !== 'introduction' || !s.briefed || s.remainingMs <= 0 || s.ended || c.result) break;
-      startLot(s, s.activeLot); break;
+      if (!canAdmitShip(s)) { s.notice = 'Deliver cargo from the yard to make room for this shipment.'; break; }
+      s.shipAdmitted = true; startLot(s, s.activeLot); break;
     case 'selectLot': {
       const index = Number(action.index), lot = s.ship.lots[index];
       if (!['inspection', 'introduction'].includes(s.screen) || s.remainingMs <= 0 || !lot || lot.result) break;
@@ -186,7 +227,7 @@ export function reduce(state, action) {
       if (!['harbor', 'upgrades'].includes(s.screen)) s.returnScreen = s.screen;
       s.screen = 'upgrades'; break;
     case 'selectUpgrade':
-      if (s.screen === 'upgrades' && ['desk','mara','training','berth','dockhand','warehouse','secondBerth','lighthouse'].includes(action.id)) s.selectedUpgrade = action.id;
+      if (s.screen === 'upgrades' && ['desk','mara','training','berth','porter','warehouse','time','transport','secondBerth','lighthouse'].includes(action.id)) s.selectedUpgrade = action.id;
       break;
     case 'tab': if (s.screen === 'inspection' && c.checks.includes(action.tab)) c.tab = action.tab; break;
     case 'focus': if (s.screen === 'inspection' && ['symbol', 'marks', 'border'].includes(action.part)) c.sealFocus = action.part; break;
@@ -202,10 +243,12 @@ export function reduce(state, action) {
     case 'judge': {
       if (s.screen !== 'inspection' || !s.briefed || !s.ship.introduced || !readyToJudge(s) || !['clear','hold'].includes(action.verdict)) break;
       if (s.remainingMs <= 0 && s.overtimeLotId !== c.id) break;
+      if (s.yard.length >= yardCapacity(s)) break;
       const correct = action.verdict === correctVerdict(c);
       const shipment = correct ? c.reward : 0;
       const clerk = correct && s.hired ? (s.trained ? ECONOMY.trainedClerk : ECONOMY.clerk) : 0;
       c.result = { id: c.id, shipId: s.ship.id, goods: c.goods, verdict: action.verdict, correct, shipment, clerk, durationMs: Math.round(c.inspectionMs) };
+      s.yard.push({ id: c.id, kind: 'import', goods: c.goods, cargo: c.cargo, destination: action.verdict === 'clear' ? 'Town market' : 'Secure custody', secure: action.verdict === 'hold', deliveryMs: 0 });
       s.coins += shipment + clerk; s.results.push(c.result); s.activeMs += c.result.durationMs;
       s.screen = 'result'; event(s, 'judgment', c.result); break;
     }
@@ -222,11 +265,62 @@ export function reduce(state, action) {
     case 'nextShift':
       if (!s.ended) break;
       s.history = [...s.history.slice(-19), { shift: s.shift, results: s.results, departures: s.departures }];
-      s.shift++; s.results = []; s.departures = 0;
-      s.remainingMs = SHIFT_MS; s.started = false; s.ended = false; s.paused = false; s.overtimeLotId = null;
+      s.shift++; s.results = []; s.departures = 0; s.exportIncome = 0; s.exportDepartures = 0;
+      s.remainingMs = shiftDuration(s); s.started = false; s.ended = false; s.paused = false; s.overtimeLotId = null;
       if (shipmentComplete(s)) newShip(s);
       else s.activeLot = s.ship.lots.findIndex(l => !l.result);
       s.screen = 'briefing'; s.briefed = false; s.returnScreen = 'introduction'; event(s, 'next_shift'); break;
+    case 'yard':
+      if (!['yard', 'outbound'].includes(s.screen)) s.yardReturn = s.screen;
+      s.screen = 'yard'; s.notice = ''; break;
+    case 'yardBack':
+      s.screen = s.ended ? 'summary' : s.yardReturn; s.notice = ''; break;
+    case 'deliver': {
+      if (s.screen !== 'yard') break;
+      const item = s.yard.find(x => x.id === action.id && x.kind === 'import');
+      if (!item) break;
+      s.yard = s.yard.filter(x => x.id !== item.id); s.delivered++;
+      s.notice = `${item.goods} delivered to ${item.destination.toLowerCase()}.`;
+      event(s, 'manual_delivery', { cargoId: item.id, destination: item.destination }); break;
+    }
+    case 'develop': {
+      const d = DEVELOPMENT[action.id], price = developmentCost(s, action.id);
+      if (s.screen !== 'upgrades' || !d || price === undefined || s.coins < price || (action.id === 'transport' && !s.porter)) break;
+      s.coins -= price; s[d.field] = d.field === 'porter' ? true : s[d.field] + 1;
+      event(s, 'development', { upgrade: action.id, level: s[d.field] }); break;
+    }
+    case 'unloadExport': {
+      if (s.screen !== 'yard' || !s.briefed || s.ended || s.remainingMs <= 0 || exportRoom(s) <= 0) break;
+      const item = s.exportWait.find(x => x.id === action.id); if (!item) break;
+      s.started = true; s.exportWait = s.exportWait.filter(x => x.id !== item.id); s.yard.push(item);
+      s.notice = `${item.goods} stored for ${item.destination}.`; event(s, 'export_unloaded', { cargoId: item.id }); break;
+    }
+    case 'outbound': {
+      if (s.screen !== 'yard' || !s.briefed || s.ended || s.remainingMs <= 0) break;
+      if (!s.outbound) {
+        const first = s.yard.find(x => x.kind === 'export'); if (!first) break;
+        const items = s.yard.filter(x => x.kind === 'export' && x.destination === first.destination).slice(0, 2);
+        s.outbound = { destination: first.destination, orders: items.map(x => ({ goods: x.goods, loaded: false })), captain: (s.exportDepartures + 2) % CAPTAINS.length };
+      }
+      s.started = true; s.screen = 'outbound'; s.notice = ''; break;
+    }
+    case 'loadExport': {
+      if (s.screen !== 'outbound' || s.remainingMs <= 0 || s.ended || !s.outbound) break;
+      const item = s.yard.find(x => x.id === action.id);
+      if (!item) break;
+      const order = s.outbound.orders.find(x => !x.loaded && x.goods === item.goods);
+      if (item.kind !== 'export' || item.destination !== s.outbound.destination || !order) { s.notice = 'That cargo does not match the order. Check the goods and destination.'; break; }
+      order.loaded = true; s.yard = s.yard.filter(x => x.id !== item.id);
+      s.notice = `${item.goods} loaded aboard.`; event(s, 'export_loaded', { cargoId: item.id }); break;
+    }
+    case 'dispatchExport': {
+      if (s.screen !== 'outbound' || s.remainingMs <= 0 || s.ended || !s.outbound?.orders.every(x => x.loaded)) break;
+      const reward = s.outbound.orders.length * 25;
+      s.coins += reward; s.exportIncome += reward; s.exportDepartures++;
+      event(s, 'export_departed', { reward, destination: s.outbound.destination });
+      s.outbound = null; s.screen = 'yard'; s.notice = `Export ship departed. Earned ${reward} coins.`; break;
+    }
+    case 'backToYard': s.screen = 'yard'; s.notice = ''; break;
     case 'hire':
       if (s.screen === 'upgrades' && !s.hired && s.coins >= ECONOMY.hireCost) { s.coins -= ECONOMY.hireCost; s.hired = true; event(s, 'mara_hired'); } break;
     case 'train':
@@ -238,5 +332,5 @@ export function reduce(state, action) {
   return s;
 }
 export function restore(raw) {
-  try { const s = JSON.parse(raw); return s?.version === 4 ? s : null; } catch { return null; }
+  try { const s = JSON.parse(raw); return s?.version === 5 ? s : null; } catch { return null; }
 }
